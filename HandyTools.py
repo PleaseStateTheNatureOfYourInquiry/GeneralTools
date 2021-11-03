@@ -102,7 +102,8 @@ class HandyTools:
 
     def QQPlot (xInput, xlabelToPrint = 'input values', ylabelToPrint = 'z (sigma)',
                 QQTitleToPrint = 'HandyTools version ' + currentVersionHandyTools + ': QQ-plot of input data',
-                HistTitleToPrint = 'HandyTools version ' + currentVersionHandyTools + ': Histogram of input data'):
+                HistTitleToPrint = 'HandyTools version ' + currentVersionHandyTools + ': Histogram of input data', 
+                plotTextAverageMedian = True):
         """
         Calculate and plot the QQ-plot (or Quantile-Quantile plot) and the histogram of a given list of input values
         """
@@ -180,8 +181,10 @@ class HandyTools:
         plt.ylabel (ylabelToPrint, fontsize = 12)
         plt.title (QQTitleToPrint)
 
-        plt.text (-2.8,2.6, labelMeanToPrint, color = 'green')
-        plt.text (-2.8,2.3, labelSTDToPrint, color = 'green')
+        if plotTextAverageMedian:
+
+            plt.text (-2.8,2.6, labelMeanToPrint, color = 'green')
+            plt.text (-2.8,2.3, labelSTDToPrint, color = 'green')
 
 
         plt.figure (2)
@@ -204,8 +207,10 @@ class HandyTools:
 
         plt.title (HistTitleToPrint)
 
-        plt.text (xInputMin - 5*xInputBinSize, 1.10*xInputHistogramMax , labelMeanToPrint, color = 'green')
-        plt.text (xInputMin - 5*xInputBinSize, 1.04*xInputHistogramMax, labelSTDToPrint, color = 'green')
+        if plotTextAverageMedian:
+        
+            plt.text (xInputMin - 5*xInputBinSize, 1.10*xInputHistogramMax , labelMeanToPrint, color = 'green')
+            plt.text (xInputMin - 5*xInputBinSize, 1.04*xInputHistogramMax, labelSTDToPrint, color = 'green')
 
         plt.show ()
 
