@@ -8,12 +8,12 @@ import datetime
 import sys
 import re
 
-currentVersionHandyTools = '20210424'
+currentVersionHandyTools = '20211213'
 
 
 class HandyTools:
     """
-    HandyTools version 20210424
+    HandyTools version 20211213
 
     Functions:
     filesInFolderTree
@@ -25,30 +25,48 @@ class HandyTools:
     """
 
 
-    def filesInFolderTree (startPath, extension = '.dat'):
+    def filesInFolderTree (startPath, extension = '.annotation', checkStartPathOnly = False):
         """
         Determine a list of strings that contain all the files paths/names ending on  extension  down the directory tree starting at  startPath .
          startPath  is the point in the directory tree where to start. The function then looks down the tree and seeks out all the files.
-        Thanks to Eliene Starreveld - Brand for providing the code of this function.
         """
 
         dirPath = Path (startPath)
-        
-        if extension == '':
 
-            listOfFileNames = [ os.path.join (root, name)
-                                for root, dirs, files in os.walk (dirPath)
-                                for name in sorted (files)
-            ]
-        
+        listOfFileNames = []
+        if checkStartPathOnly:
+
+            listOfAllFileNames = sorted ( os.listdir (startPath) )         
+            if extension == '':
+ 
+                # the file .DS_Store is a MAC OS administration file, not of interest to keep
+                listOfFileNames = [ fileName  for fileName in listOfAllFileNames  if fileName != '.DS_Store']
+           
+            
+            else:
+                    
+                listOfFileNames = [ fileName  for fileName in listOfAllFileNames if fileName.endswith (extension) ]
+
         
         else:
 
-            listOfFileNames = [ os.path.join (root, name)
-                                for root, dirs, files in os.walk (dirPath)
-                                for name in sorted (files)
-                                if name.endswith (extension)
-            ]
+            if extension == '':
+
+                # the file .DS_Store is a MAC OS administration file, not of interest to keep
+                listOfFileNames = [ os.path.join (root, name)
+                                    for root, dirs, files in os.walk (dirPath)
+                                    for name in sorted (files)
+                                    if name != '.DS_Store'
+                ]
+        
+        
+            else:
+
+                listOfFileNames = [ os.path.join (root, name)
+                                    for root, dirs, files in os.walk (dirPath)
+                                    for name in sorted (files)
+                                    if name.endswith (extension)
+                ]
 
 
         return listOfFileNames
