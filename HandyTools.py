@@ -45,7 +45,9 @@ class HandyTools:
             
             else:
                     
-                listOfFileNames = [ fileName  for fileName in listOfAllFileNames if fileName.endswith (extension) ]
+                listOfFileNames = [ fileName  for fileName in listOfAllFileNames 
+                                    if fileName.endswith (extension) or fileName.endswith (extension + '.locked')
+                ]
 
         
         else:
@@ -65,7 +67,7 @@ class HandyTools:
                 listOfFileNames = [ os.path.join (root, name)
                                     for root, dirs, files in os.walk (dirPath)
                                     for name in sorted (files)
-                                    if name.endswith (extension)
+                                    if name.endswith (extension) or name.endswith (extension + '.locked')
                 ]
 
 
