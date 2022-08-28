@@ -1,19 +1,23 @@
-from readtable import ReadTable
-
-from pathlib import Path
-import matplotlib.pyplot as plt
-import numpy as np
 import os
-import datetime
 import sys
+import path
+from pathlib import Path
+
+import datetime
+
 import re
 
-currentVersionHandyTools = '20211213'
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+from readtable import ReadTable
+
+currentVersionHandyTools = '20220828'
 
 
 class HandyTools:
     """
-    HandyTools version 20211213
 
     Functions:
     filesInFolderTree
@@ -25,7 +29,8 @@ class HandyTools:
     """
 
 
-    def filesInFolderTree (startPath, extension = '.annotation', checkStartPathOnly = False):
+    # A handy function to get the list of absolute paths of all files of a certain extension (default .png) down a directory tree
+    def getFilesInDirectoryTree (startPath, extension = '', checkStartPathOnly = False):
         """
         Determine a list of strings that contain all the files paths/names ending on  extension  down the directory tree starting at  startPath .
          startPath  is the point in the directory tree where to start. The function then looks down the tree and seeks out all the files.
@@ -38,36 +43,36 @@ class HandyTools:
 
             listOfAllFileNames = sorted ( os.listdir (startPath) )         
             if extension == '':
- 
-                # the file .DS_Store is a MAC OS administration file, not of interest to keep
+
+                # The files '.DS_Store' is a MAC OS administration file, that is not of interest to keep.
                 listOfFileNames = [ fileName  for fileName in listOfAllFileNames  if fileName != '.DS_Store']
-           
-            
+       
+        
             else:
-                    
+                
                 listOfFileNames = [ fileName  for fileName in listOfAllFileNames 
-                                    if fileName.endswith (extension) or fileName.endswith (extension + '.locked')
+                                    if fileName.endswith (extension)
                 ]
 
-        
+    
         else:
 
             if extension == '':
 
-                # the file .DS_Store is a MAC OS administration file, not of interest to keep
+                # The files '.DS_Store' is a MAC OS administration file, that is not of interest to keep.
                 listOfFileNames = [ os.path.join (root, name)
                                     for root, dirs, files in os.walk (dirPath)
                                     for name in sorted (files)
                                     if name != '.DS_Store'
                 ]
-        
-        
+    
+    
             else:
 
                 listOfFileNames = [ os.path.join (root, name)
                                     for root, dirs, files in os.walk (dirPath)
                                     for name in sorted (files)
-                                    if name.endswith (extension) or name.endswith (extension + '.locked')
+                                    if name.endswith (extension)
                 ]
 
 
@@ -75,18 +80,41 @@ class HandyTools:
 
 
 
+    # NOT SURE HOW USEFUL THIS IS ... PERHAPS DELETE THIS FUNCTION
+    # Get the current date and time string for printing to the header of a file.
     def getDateAndTimeForHeader ():
         """
         Get a date and time string for printing in a file header to indicate the time of creation of the file
         """
         
-        timeOfExport = datetime.datetime.now ()
+        timeOfExport = HandyTools.getDateAndTime ()
         
         dateTimeString =  'on ' + str (timeOfExport.year) + '-' + str( timeOfExport.month) + '-' + str (timeOfExport.day) + ' at ' \
             + str (timeOfExport.hour) + 'h' + str (timeOfExport.minute) + 'm' + str (timeOfExport.second) +'s'
         
         return dateTimeString
 
+
+
+    # Get the date and time now.
+    def getDateAndTime ():
+        '''
+        Get the date and time now.
+        '''
+        
+        # This try - except loop is needed because apparently between python versions the date module has changed some of its structure
+        try:
+
+            dateAndTime = datetime.now ()
+
+        except:
+
+            dateAndTime = datetime.datetime.now ()
+
+                
+        return dateAndTime
+    
+    
 
 
     def getUncertaintyElectrogramADU (electrogramADU):
