@@ -30,7 +30,7 @@ class HandyTools:
 
 
     # A handy function to get the list of absolute paths of all files of a certain extension (default .png) down a directory tree
-    def getFilesInDirectoryTree (startPath, extension = '', checkStartPathOnly = False):
+    def getFilesInDirectoryTree (startPath, extension = '', stringsToExclude = [], checkStartPathOnly = False):
         """
         Determine a list of strings that contain all the files paths/names ending on  extension  down the directory tree starting at  startPath .
          startPath  is the point in the directory tree where to start. The function then looks down the tree and seeks out all the files.
@@ -74,6 +74,31 @@ class HandyTools:
                                     for name in sorted (files)
                                     if name.endswith (extension)
                 ]
+
+
+    
+        # The user can specify certains string that, when part of a file name, this file deleted from the  listOfFileNames
+        if len (stringsToExclude):
+        
+            iDeleteFromList = []
+            for iFileName, fileName in enumerate (listOfFileNames):
+            
+                for stringToExclude in stringsToExclude:
+                
+                    if stringToExclude in fileName:
+                    
+                        iDeleteFromList.append (iFileName)  
+            
+
+            # If there are files to be deleted from the  listOfFileNames , then delete them.
+            if len (iDeleteFromList):
+            
+                # Sort the indices to be removed in reverse order, larger at the start of the  iDeleteFromList  list. 
+                iDeleteFromList = sorted (iDeleteFromList, reverse = True)                
+                for iDelete in iDeleteFromList:
+                
+                    listOfFileNames.pop (iDelete)
+
 
 
         return listOfFileNames
