@@ -1,7 +1,9 @@
 import os
 import sys
+
 import path
 from pathlib import Path
+separatorCharacter = '\\' if sys.platform == 'win32' else '/'
 
 import datetime
 
@@ -13,7 +15,7 @@ import numpy as np
 
 from readtable import ReadTable
 
-currentVersionHandyTools = '20220828'
+currentVersionHandyTools = '20221014'
 
 
 class HandyTools:
@@ -45,12 +47,12 @@ class HandyTools:
             if extension == '':
 
                 # The files '.DS_Store' is a MAC OS administration file, that is not of interest to keep.
-                listOfFileNames = [ fileName  for fileName in listOfAllFileNames  if fileName != '.DS_Store']
+                listOfFileNames = [ os.path.abspath (startPath + separatorCharacter + fileName)  for fileName in listOfAllFileNames  if fileName != '.DS_Store']
        
         
             else:
                 
-                listOfFileNames = [ fileName  for fileName in listOfAllFileNames 
+                listOfFileNames = [ os.path.abspath (startPath + separatorCharacter + fileName)  for fileName in listOfAllFileNames 
                                     if fileName.endswith (extension)
                 ]
 
@@ -60,7 +62,7 @@ class HandyTools:
             if extension == '':
 
                 # The files '.DS_Store' is a MAC OS administration file, that is not of interest to keep.
-                listOfFileNames = [ os.path.join (root, name)
+                listOfFileNames = [ os.path.abspath ( os.path.join (root, name) )
                                     for root, dirs, files in os.walk (dirPath)
                                     for name in sorted (files)
                                     if name != '.DS_Store'
@@ -69,7 +71,7 @@ class HandyTools:
     
             else:
 
-                listOfFileNames = [ os.path.join (root, name)
+                listOfFileNames = [ os.path.abspath ( os.path.join (root, name) )
                                     for root, dirs, files in os.walk (dirPath)
                                     for name in sorted (files)
                                     if name.endswith (extension)
