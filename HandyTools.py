@@ -1,3 +1,8 @@
+# HandyTools
+# Author = Maarten Roos
+
+currentVersionHandyTools = '20221028'
+
 import os
 import sys
 
@@ -13,21 +18,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-from readtable import ReadTable
-
-currentVersionHandyTools = '20221014'
-
-
 class HandyTools:
     """
-
     Functions:
     filesInFolderTree
     getDateAndTimeForHeader
     getUncertaintyElectrogramADU
     QQPlot
     linearLeastSquare
-    
     """
 
 
