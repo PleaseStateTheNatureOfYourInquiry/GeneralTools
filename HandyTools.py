@@ -1,18 +1,16 @@
-# HandyTools
+# HandyTools: a Python pseudo-class
 # Author = Maarten Roos
 
-currentVersionHandyTools = '20221028'
+currentVersionHandyTools = '20221029'
 
 import os
 import sys
+separatorCharacter = '\\' if sys.platform == 'win32' else '/'
 
 import path
 from pathlib import Path
-separatorCharacter = '\\' if sys.platform == 'win32' else '/'
 
 import datetime
-
-import re
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -20,12 +18,7 @@ import numpy as np
 
 class HandyTools:
     """
-    Functions:
-    filesInFolderTree
-    getDateAndTimeForHeader
-    getUncertaintyElectrogramADU
-    QQPlot
-    linearLeastSquare
+    HandyTools is a pseudo-class (no instantiation, no 'self'), bundling a couple of functions that can come in handy.
     """
 
 
@@ -105,22 +98,6 @@ class HandyTools:
 
 
 
-    # NOT SURE HOW USEFUL THIS IS ... PERHAPS DELETE THIS FUNCTION
-    # Get the current date and time string for printing to the header of a file.
-    def getDateAndTimeForHeader ():
-        """
-        Get a date and time string for printing in a file header to indicate the time of creation of the file
-        """
-        
-        timeOfExport = HandyTools.getDateAndTime ()
-        
-        dateTimeString =  'on ' + str (timeOfExport.year) + '-' + str( timeOfExport.month) + '-' + str (timeOfExport.day) + ' at ' \
-            + str (timeOfExport.hour) + 'h' + str (timeOfExport.minute) + 'm' + str (timeOfExport.second) +'s'
-        
-        return dateTimeString
-
-
-
     # Get the date and time now.
     def getDateAndTime ():
         '''
@@ -139,46 +116,58 @@ class HandyTools:
                 
         return dateAndTime
     
+
+
+    # Determine the values of the variables a and b for the linear least square solution y  =  a * x  +  b.
+    def linearLeastSquare (xInput, yInput):
+        '''
+        Determine the values of the variables a and b for the linear least square solution y  =  a * x  +  b
+        as well as their uncertainties.
+        '''
     
+        xInput = np.asarray (xInput)
+        yInput = np.asarray (yInput)
+        
+        # do not take into account any NaN values in yInput
+        iValid = np.where ( np.isfinite (yInput) )
+        
+        x = xInput [iValid]
+        y = yInput [iValid]
+
+        numberOfValues = len (x)
+        
+        sumX = np.sum (x)
+        sumX2 = np.sum (x * x)
+        
+        sumY = np.sum (y)
+        sumXY = np.sum (x * y)
+        
+        determinant = numberOfValues * sumX2 - sumX * sumX
+        
+        a = ( numberOfValues * sumXY - sumX * sumY ) / determinant
+        b = ( sumX2 * sumY - sumX * sumXY ) / determinant
+
+        
+        residu = y - ( a * x + b )
+        sumResidu2 = np.sum (residu * residu)
+        
+        averageErrorY = sumResidu2 / (numberOfValues - 2)
+        averageErrorA = averageErrorY * numberOfValues / determinant
+        averageErrorB = averageErrorY * sumX2 / determinant
+        
+        uncertaintyA = np.sqrt (averageErrorA)
+        uncertaintyB = np.sqrt (averageErrorB)
+        
+        return a, b, uncertaintyA, uncertaintyB 
 
 
-    def getUncertaintyElectrogramADU (electrogramADU):
-        """
-        Determine the uncertainty level of the voltage measurements of an electrogram in ADU!!
-        """
-
-        numberOfSamples = len (electrogramADU)
-        np.seterr (all='ignore')
-
-        segments = []
-        segments.append (electrogramADU [1] - electrogramADU [0])
-        for iDataPoint in range (1, numberOfSamples-1):
-
-            deltaVoltage = electrogramADU [iDataPoint+1] - electrogramADU [iDataPoint]
-
-            if (segments [-1] > 0 and deltaVoltage >= 0) or (segments [-1] < 0 and deltaVoltage <= 0):
-
-                segments [-1] += deltaVoltage
-
-            else:
-
-                segments.append (deltaVoltage)
-
-        segments = np.array (segments)
-        iSegmentsNoise = np.where (np.abs (segments) < 350)[0]
-
-        uncertaintyLevelADU = np.std (segments [iSegmentsNoise])
-
-        return uncertaintyLevelADU, segments
-
-
-
+    # Calculate and plot the QQ-plot (or Quantile-Quantile plot) and the histogram of a given list of input values.
     def QQPlot (xInput, xlabelToPrint = 'input values', ylabelToPrint = 'z (sigma)',
                 QQTitleToPrint = 'HandyTools version ' + currentVersionHandyTools + ': QQ-plot of input data',
                 HistTitleToPrint = 'HandyTools version ' + currentVersionHandyTools + ': Histogram of input data', 
                 plotTextAverageMedian = True):
         """
-        Calculate and plot the QQ-plot (or Quantile-Quantile plot) and the histogram of a given list of input values
+        Calculate and plot the QQ-plot (or Quantile-Quantile plot) and the histogram of a given list of input values.
         """
 
         xInput = np.array (xInput)
@@ -186,7 +175,7 @@ class HandyTools:
         xInputMedian = np.median (xInput)
         xInputStd = np.std (xInput)
 
-        x, cumulativeNormalDistribution = getCumulativeNormalDistribution (xInputMean, xInputStd)
+        x, cumulativeNormalDistribution = HandyTools.getCumulativeNormalDistribution (xInputMean, xInputStd)
 
         xInputOrdered = xInput.copy ()
         xInputOrdered.sort ()
@@ -289,97 +278,59 @@ class HandyTools:
 
 
 
-    def linearLeastSquare (xInput, yInput):
-        '''
-        Determine the values of the variables a and b for the linear least square solution y  =  a * x  +  b
-        as well as their uncertainties.
-        '''
-    
-        xInput = np.asarray (xInput)
-        yInput = np.asarray (yInput)
+    # Calculate the gaussian normal cumulative distribution curve N(mu,sigma) between -5*sigma and +5*sigma at stepsize 0.05*sigma.
+    def getCumulativeNormalDistribution (mu,sigma):
+        """
+        Calculate the gaussian normal cumulative distribution curve N(mu,sigma) between -5*sigma and +5*sigma at stepsize 0.05*sigma.
+
+        (Used by the QQPlot function)
+        """
+
+        x, normalDistribution = HandyTools.getNormalDistribution (mu, sigma)
+
+        cumulativeNormalDistribution = []
+
+        cumulativeNormalDistribution.append (normalDistribution [0])
+
+        for i in range (1,len (x)-1):
+
+            cumulativeNormalDistribution.append ( cumulativeNormalDistribution [-1] + \
+                                                  (x [i]-x [i-1]) * ( normalDistribution [i] + normalDistribution [i-1]) / 2 \
+                                                )
+
+        cumulativeNormalDistribution.append (cumulativeNormalDistribution [-1])
+
+        return x, cumulativeNormalDistribution
+
+
+
+    # Calculate the gaussian normal distribution curve N(mu,sigma) between -5*sigma and +5*sigma at stepsize 0.05*sigma.
+    def getNormalDistribution (mu,sigma):
+        """
+        Calculate the gaussian normal distribution curve N(mu,sigma) between -5*sigma and +5*sigma at stepsize 0.05*sigma.
         
-        # do not take into account any NaN values in yInput
-        iValid = np.where ( np.isfinite (yInput) )
+        (Used by the getCumulativeNormalDistribution function).
+        """
+
+        cnst = 1 / (sigma * np.sqrt (2 * np.pi))
+
+        x = [ (mu + i*sigma / 20) for i in range (-100, 101) ]
+
+        normalDistribution = [cnst * HandyTools.getNormalDistributionValue (x [i], mu, sigma)  for i in range (len (x))]
+
+        return x, normalDistribution
+
+
+
+    # The value of the gaussian normal distribution defined by N(mu, sigma) at xi.
+    def getNormalDistributionValue (xi,mu,sigma):
+        """
+        The value of the gaussian normal distribution defined by N(mu, sigma) at xi.
         
-        x = xInput [iValid]
-        y = yInput [iValid]
+        (Used by the getNormalDistribution function).
+        """
 
-        numberOfValues = len (x)
-        
-        sumX = np.sum (x)
-        sumX2 = np.sum (x * x)
-        
-        sumY = np.sum (y)
-        sumXY = np.sum (x * y)
-        
-        determinant = numberOfValues * sumX2 - sumX * sumX
-        
-        a = ( numberOfValues * sumXY - sumX * sumY ) / determinant
-        b = ( sumX2 * sumY - sumX * sumXY ) / determinant
+        normalValue = np.exp ( -0.5 * (xi - mu) * (xi - mu) / sigma / sigma )
 
-        
-        residu = y - ( a * x + b )
-        sumResidu2 = np.sum (residu * residu)
-        
-        averageErrorY = sumResidu2 / (numberOfValues - 2)
-        averageErrorA = averageErrorY * numberOfValues / determinant
-        averageErrorB = averageErrorY * sumX2 / determinant
-        
-        uncertaintyA = np.sqrt (averageErrorA)
-        uncertaintyB = np.sqrt (averageErrorB)
-        
-        return a, b, uncertaintyA, uncertaintyB 
+        return normalValue
 
-
-
-#------------------------------------------------
-# Three functions needed for the QQplot function
-
-
-def getNormalDistributionValue (xi,mu,sigma):
-    """
-    The value of the gaussian normal distribution defined by N(mu, sigma) at xi
-    """
-
-    normalValue = np.exp ( -0.5 * (xi - mu) * (xi - mu) / sigma / sigma )
-
-    return normalValue
-
-
-def getNormalDistribution (mu,sigma):
-    """
-    Calculate the gaussian normal distribution curve N(mu,sigma) between -5*sigma and +5*sigma at stepsize 0.05*sigma
-    """
-
-    cnst = 1 / (sigma * np.sqrt (2 * np.pi))
-
-    x = [ (mu + i*sigma / 20) for i in range (-100, 101) ]
-
-    normalDistribution = [cnst * getNormalDistributionValue (x [i], mu, sigma)  for i in range (len (x))]
-
-    return x, normalDistribution
-
-
-def getCumulativeNormalDistribution (mu,sigma):
-    """
-    Calculate the gaussian normal cumulative distribution curve N(mu,sigma) between -5*sigma and +5*sigma at stepsize 0.05*sigma
-    """
-
-    x, normalDistribution = getNormalDistribution (mu, sigma)
-
-    cumulativeNormalDistribution = []
-
-    cumulativeNormalDistribution.append (normalDistribution [0])
-
-    for i in range (1,len (x)-1):
-
-        cumulativeNormalDistribution.append ( cumulativeNormalDistribution [-1] + \
-                                              (x [i]-x [i-1]) * ( normalDistribution [i] + normalDistribution [i-1]) / 2 \
-                                            )
-
-    cumulativeNormalDistribution.append (cumulativeNormalDistribution [-1])
-
-    return x, cumulativeNormalDistribution
-
-
-#------------------------------------------------
