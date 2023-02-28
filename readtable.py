@@ -111,8 +111,7 @@ class ReadTable:
                
                     for j in range(self.n_data_columns):
 
-                         self.data[i-n_comment_lines-1,j] = \
-                              float(data_in[j])  
+                         self.data[i-n_comment_lines-1,j] = float(data_in[j])  
 
 
 
