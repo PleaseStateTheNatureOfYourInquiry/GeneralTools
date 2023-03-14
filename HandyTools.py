@@ -1,7 +1,7 @@
 # HandyTools: a Python pseudo-class
 # Author = Maarten Roos
 
-currentVersionHandyTools = '20221029'
+currentVersionHandyTools = '20230307'
 
 import os
 import sys
@@ -24,10 +24,11 @@ class HandyTools:
 
     # A handy function to get the list of absolute paths of all files of a certain extension (default .png) down a directory tree
     def getFilesInDirectoryTree (startPath, extension = '', stringsToExclude = [], checkStartPathOnly = False):
-        """
+        '''
+        **Description:**
         Determine a list of strings that contain all the files paths/names ending on  extension  down the directory tree starting at  startPath .
          startPath  is the point in the directory tree where to start. The function then looks down the tree and seeks out all the files.
-        """
+        '''
 
         dirPath = Path (startPath)
 
@@ -98,9 +99,44 @@ class HandyTools:
 
 
 
+    # Get the absolute path for a file.
+    def getFileAndAbsolutePath (fileName):
+        '''
+        :param fileName: file name (and path) of the file.
+        
+        :return: absolute path and file name, absolute directory, just the file name.
+        :rtype: str, str, str
+
+        **Description:**    
+        Get the absolute path, directory and root (just the file name) for a file.
+        If '' are returned, then the file does not exist and an error message is printed to the Python console.
+        '''
+        
+        absolutePath = ''
+        fileRootName = ''
+        absoluteDirectory = ''
+
+        if os.path.isfile (fileName):
+        
+            absolutePath = os.path.abspath (fileName)
+            fileRootName = absolutePath.split ('/') [-1]
+            absoluteDirectory = os.path.dirname (absolutePath)
+            
+        else:
+        
+            print ()
+            print ( ' WARNING - File  {}  does not exist'.format (fileName) )
+            print ()
+
+
+        return absolutePath, absoluteDirectory, fileRootName
+        
+
+
     # Get the date and time now.
     def getDateAndTime ():
         '''
+        **Description:**
         Get the date and time now.
         '''
         
@@ -115,12 +151,56 @@ class HandyTools:
 
                 
         return dateAndTime
+ 
+   
+
+    # Calculate  Hours Minutes Seconds  from a total number of seconds
+    def getHMSFromTotalNumberOfSeconds (numberOfSecondsTotal = 0, numberOfDigitsAccuracy = 4):
+        '''
+        **Description:**
+        Calculate  Hours Minutes Seconds
+        '''
     
+        numberOfHours = int (numberOfSecondsTotal / 3600)
+        numberOfMinutes = int ( (numberOfSecondsTotal - numberOfHours * 3600) / 60 )
+        
+        accuracyFactor = 10**numberOfDigitsAccuracy
+        numberOfSeconds = int ( ( numberOfSecondsTotal - numberOfHours * 3600 - numberOfMinutes * 60 ) * accuracyFactor ) / accuracyFactor
+
+        return [numberOfHours, numberOfMinutes, numberOfSeconds], \
+               [ '{:02d}'.format (numberOfHours), '{:02d}'.format (numberOfMinutes), '{:7.4f}'.format (numberOfSeconds) ]                 
+
+
+    
+    # Calculate the total number of seconds from an Hours Minutes Seconds list.
+    def getTotalNumberOfSecondsfromHMS (HMS = [0,0,0]):
+        '''
+        **Description:**
+        Calculate the total number of seconds from an Hours Minutes Seconds list.
+        HMS is a list of [int, int, float] or a list of three strings.
+        '''
+        
+        try:
+        
+           numberOfHours = HMS [0]
+           numberOfMinutes = HMS [1]
+           numberOfSeconds = HMS [2]
+           
+        except:
+        
+           numberOfHours = int ( HMS [0] )
+           numberOfMinutes = int ( HMS [1] )
+           numberOfSeconds = float ( HMS [2] )
+            
+            
+        return numberOfHours * 3600 + numberOfMinutes * 60 + numberOfSeconds
+      
 
 
     # Determine the values of the variables a and b for the linear least square solution y  =  a * x  +  b.
     def linearLeastSquare (xInput, yInput):
         '''
+        **Description:**
         Determine the values of the variables a and b for the linear least square solution y  =  a * x  +  b
         as well as their uncertainties.
         '''
@@ -166,9 +246,10 @@ class HandyTools:
                 QQTitleToPrint = 'HandyTools version ' + currentVersionHandyTools + ': QQ-plot of input data',
                 HistTitleToPrint = 'HandyTools version ' + currentVersionHandyTools + ': Histogram of input data', 
                 plotTextAverageMedian = True):
-        """
+        '''
+        **Description:**
         Calculate and plot the QQ-plot (or Quantile-Quantile plot) and the histogram of a given list of input values.
-        """
+        '''
 
         xInput = np.array (xInput)
         xInputMean = np.mean (xInput)
@@ -280,11 +361,12 @@ class HandyTools:
 
     # Calculate the gaussian normal cumulative distribution curve N(mu,sigma) between -5*sigma and +5*sigma at stepsize 0.05*sigma.
     def getCumulativeNormalDistribution (mu,sigma):
-        """
+        '''
+        **Description:**
         Calculate the gaussian normal cumulative distribution curve N(mu,sigma) between -5*sigma and +5*sigma at stepsize 0.05*sigma.
 
         (Used by the QQPlot function)
-        """
+        '''
 
         x, normalDistribution = HandyTools.getNormalDistribution (mu, sigma)
 
@@ -306,11 +388,12 @@ class HandyTools:
 
     # Calculate the gaussian normal distribution curve N(mu,sigma) between -5*sigma and +5*sigma at stepsize 0.05*sigma.
     def getNormalDistribution (mu,sigma):
-        """
+        '''
+        **Description:**
         Calculate the gaussian normal distribution curve N(mu,sigma) between -5*sigma and +5*sigma at stepsize 0.05*sigma.
         
         (Used by the getCumulativeNormalDistribution function).
-        """
+        '''
 
         cnst = 1 / (sigma * np.sqrt (2 * np.pi))
 
@@ -324,11 +407,12 @@ class HandyTools:
 
     # The value of the gaussian normal distribution defined by N(mu, sigma) at xi.
     def getNormalDistributionValue (xi,mu,sigma):
-        """
+        '''
+        **Description:**
         The value of the gaussian normal distribution defined by N(mu, sigma) at xi.
         
         (Used by the getNormalDistribution function).
-        """
+        '''
 
         normalValue = np.exp ( -0.5 * (xi - mu) * (xi - mu) / sigma / sigma )
 
