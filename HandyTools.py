@@ -194,7 +194,37 @@ class HandyTools:
             
             
         return numberOfHours * 3600 + numberOfMinutes * 60 + numberOfSeconds
-      
+
+
+
+    # Used in the  getUncertaintyLevelInElectrode  method and by  AnnotationTool  in te NoiseViewer method.
+    # Determine the list of amplitude segments for the electrogram.
+    def getListOfAmplitudeSegmentsFromDataValuesList (dataValuesList):
+        '''
+        Determine the list of amplitude segments from a (wobbly) list of data values.
+        '''
+
+        np.seterr (all = 'ignore')
+
+        amplitudeSegments = []
+        amplitudeSegments.append (dataValuesList [1] - dataValuesList [0])
+        for iSample in range (1, len (dataValuesList) - 1):
+
+            deltaValue = dataValuesList [iSample + 1] - dataValuesList [iSample]
+
+            if (amplitudeSegments [-1] > 0 and deltaValue >= 0) or (amplitudeSegments [-1] < 0 and deltaValue <= 0):
+
+                amplitudeSegments [-1] += deltaValue
+
+            else:
+
+                amplitudeSegments.append (deltaValue)
+
+
+        amplitudeSegments = np.array (amplitudeSegments)        
+                
+        return amplitudeSegments
+   
 
 
     # Determine the values of the variables a and b for the linear least square solution y  =  a * x  +  b.
