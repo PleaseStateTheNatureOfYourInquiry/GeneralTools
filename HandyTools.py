@@ -1,7 +1,7 @@
 # HandyTools: a Python pseudo-class
 # Author = Maarten Roos
 
-currentVersionHandyTools = '20230307'
+currentVersionHandyTools = '20230322'
 
 import os
 import sys
@@ -130,7 +130,54 @@ class HandyTools:
 
 
         return absolutePath, absoluteDirectory, fileRootName
+
+
         
+    # Save content (list, dictionary, ...) to a numpy file with a custom extension.
+    def saveContentToNumpyWithCustomExtension (contentToSave, fileName, extensionWithoutDot):
+        '''
+        :param contentToSave:
+        
+        :param fileName:
+        :type fileName: str
+ 
+        :param extensionWithoutDot:
+        :type extensionWithoutDot: str
+        
+        :return: file saved successful, file already exists.
+        :rtype:bool, bool
+        
+        **Description:**
+        Save content (list, dictionary, ...) to a numpy file with a custom extension.
+        '''
+    
+        fileNameWithExtension = fileName + '.' + extensionWithoutDot
+        fileSaved = False
+
+        # Only attempt to save if the file does not yet exist.
+        if not os.path.isfile (fileNameWithExtension):
+        
+            fileAlreadyExists = False            
+
+            try:
+        
+                np.save (fileNameWithExtension, contentToSave)
+                os.rename (fileNameWithExtension + '.npy', fileNameWithExtension)
+        
+                fileSaved = True
+
+            except:
+        
+                pass
+ 
+ 
+        else:
+            
+            fileAlreadyExists = True
+
+            
+        return fileSaved, fileAlreadyExists
+    
 
 
     # Get the date and time now.
