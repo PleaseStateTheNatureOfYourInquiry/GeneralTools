@@ -1,7 +1,7 @@
 # HandyTools: a Python pseudo-class
 # Author = Maarten Roos
 
-currentVersionHandyTools = '20230322'
+currentVersionHandyTools = '20230327'
 
 import os
 import sys
@@ -248,29 +248,38 @@ class HandyTools:
     # Determine the list of amplitude segments for the electrogram.
     def getListOfAmplitudeSegmentsFromDataValuesList (dataValuesList):
         '''
-        Determine the list of amplitude segments from a (wobbly) list of data values.
+        Determine the list of amplitude segments from a list of wobbling data values.
         '''
 
         np.seterr (all = 'ignore')
 
-        amplitudeSegments = []
-        amplitudeSegments.append (dataValuesList [1] - dataValuesList [0])
+        segmentAmplitudes = []
+        segmentAmplitudes.append (dataValuesList [1] - dataValuesList [0])
+
+        segmentStartindices = []
+        segmentStartindices.append (0)
+
+        segmentStartIndex = 0
         for iSample in range (1, len (dataValuesList) - 1):
 
             deltaValue = dataValuesList [iSample + 1] - dataValuesList [iSample]
 
-            if (amplitudeSegments [-1] > 0 and deltaValue >= 0) or (amplitudeSegments [-1] < 0 and deltaValue <= 0):
+            if (segmentAmplitudes [-1] > 0 and deltaValue >= 0) or (segmentAmplitudes [-1] < 0 and deltaValue <= 0):
 
-                amplitudeSegments [-1] += deltaValue
+                segmentAmplitudes [-1] += deltaValue
 
             else:
 
-                amplitudeSegments.append (deltaValue)
+                segmentAmplitudes.append (deltaValue)
+
+                segmentStartindices.append (segmentStartIndex)
+                segmentStartIndex = iSample
 
 
-        amplitudeSegments = np.array (amplitudeSegments)        
+        segmentAmplitudes = np.asarray (segmentAmplitudes)        
+        segmentStartindices = np.asarray (segmentStartindices)
                 
-        return amplitudeSegments
+        return segmentAmplitudes, segmentStartindices
    
 
 
