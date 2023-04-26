@@ -11,9 +11,12 @@ import path
 from pathlib import Path
 
 import datetime
+import time
 
 import matplotlib.pyplot as plt
 import numpy as np
+
+from scipy import signal
 
 
 class HandyTools:
@@ -168,7 +171,7 @@ class HandyTools:
 
             except:
         
-                pass
+                print ( 'Warning: file {} already exists, it was not overwritten!'.format (fileNameWithExtension) )
  
  
         else:
@@ -244,6 +247,31 @@ class HandyTools:
 
 
 
+    # Determine and print execution of a piece of code.
+    def getRunTime (functionName, startTime = None, indent = 0, printResult = True):
+        '''
+        Determine and print execution of a piece of code.
+        '''
+        
+        # Get the start time of the function's execution. This is the default.
+        if not startTime:
+        
+            print ( ' ' * indent * 3 + ' --> Start time of {} retrieved'.format (functionName) )
+            return time.time ()
+        
+
+        # If  printResult  is True, then print the end time, given the  startTime.        
+        elif printResult:
+        
+            print ( ' ' * indent * 3 + ' --> Run time for {} = {:9.4f}s'.format (functionName, time.time () - startTime) )
+        
+        # If  printResult  is False, then return the end time, given the  startTime.
+        else:
+        
+            return time.time () - startTime
+        
+
+
     # Used in the  getUncertaintyLevelInElectrode  method and by  AnnotationTool  in te NoiseViewer method.
     # Determine the list of amplitude segments for the electrogram.
     def getListOfAmplitudeSegmentsFromDataValuesList (dataValuesList):
@@ -281,6 +309,24 @@ class HandyTools:
                 
         return segmentAmplitudes, segmentStartindices
    
+
+
+    # Pass a given input signal through a notch filter.
+    def getNotchFilteredSignal (inputSignal, samplingFrequency = 1000, notchFrequency = 50, qualityFactor = 20):
+        '''
+        Pass a given input signal through a notch filter.
+        '''
+         
+        # Design a notch filter using the signal.iirnotch method (Infinite Impulse Response)
+        bNotch, aNotch = signal.iirnotch (notchFrequency, qualityFactor, samplingFrequency)
+ 
+        # Compute magnitude response of the designed filter
+        filterFrequency, amplitudedB = signal.freqz (bNotch, aNotch, fs = 2 * np.pi)
+        
+        outputSignal = signal.filtfilt (bNotch, aNotch, inputSignal)
+
+        return outputSignal, filterFrequency, amplitudedB
+
 
 
     # Determine the values of the variables a and b for the linear least square solution y  =  a * x  +  b.
