@@ -135,6 +135,46 @@ class HandyTools:
         return absolutePath, absoluteDirectory, fileRootName
 
 
+  
+    # Create the full path for a given file with full path or just full path.   
+    def createPathToFile (fileNameAndFullPath = '', fullPath = ''):
+        '''
+        :param fileNameAndFullPath: file name with full path.
+        :type fileNameAndFullPath: stringsToExclude
+        
+        :param fullPath: full Path
+        :type fullPath: str
+        
+        :return: full path
+        :rtype: str
+        
+        **Description:**
+        Create the full path for a given file with full path (``fileNameAndFullPath`` string) or just full path (``fullPath`` string).
+        Return the full path that has been created as a string.
+        If not successful (full path already exists or cannot be created due to writing permission restrictions), then return an empty string.
+        '''
+
+
+        if fileNameAndFullPath:
+        
+            fullPathToCreate = fileNameAndFullPath.split ( fileNameAndFullPath.split (separatorCharacter)[-1] ) [0]
+
+
+        if fullPath:
+        
+            fullPathToCreate = fullPath
+
+        
+        try:
+        
+            os.makedirs (fullPathToCreate)
+            return fullPathToCreate
+            
+        except:
+        
+            return ''
+            
+    
         
     # Save content (list, dictionary, ...) to a numpy file with a custom extension.
     def saveContentToNumpyWithCustomExtension (contentToSave, fileName, extensionWithoutDot):
@@ -202,7 +242,37 @@ class HandyTools:
                 
         return dateAndTime
  
+
+
+    # Get the date and time now and return in a string format.
+    def getDateAndTimeString (includeYMD = True, dateFormat = 'YMD', includeHMS = True):
+        '''
+        **Description:**
+        Get the date and time now and return in a string format.
+        '''
+      
+        dateAndTime = HandyTools.getDateAndTime ()  
+                
+        YMD = '{}-{}-{}'.format ( str (dateAndTime.year), str (dateAndTime.month).zfill(2), str (dateAndTime.day).zfill(2) )
+        DMY = '{}-{}-{}'.format ( str (dateAndTime.day).zfill(2), str (dateAndTime.month).zfill(2), str (dateAndTime.year) )
+        MDY = '{}-{}-{}'.format ( str (dateAndTime.month).zfill(2), str (dateAndTime.day).zfill(2), str (dateAndTime.year) )
+
+        HMS = '{}:{}:{}'.format ( str (dateAndTime.hour).zfill(2), str (dateAndTime.minute).zfill(2), str (dateAndTime.second).zfill(2) )
+
+        dateAndTimeString = ''
+        if includeYMD:
+        
+            if dateFormat == 'YMD': dateAndTimeString += YMD
+            if dateFormat == 'DMY': dateAndTimeString += DMY
+            if dateFormat == 'MDY': dateAndTimeString += MDY
+
+        if includeHMS and includeYMD: dateAndTimeString += ' at '
+        
+        if includeHMS: dateAndTimeString += HMS
+        
+        return dateAndTimeString
    
+
 
     # Calculate  Hours Minutes Seconds  from a total number of seconds
     def getHMSFromTotalNumberOfSeconds (numberOfSecondsTotal = 0, numberOfDigitsAccuracy = 4):
