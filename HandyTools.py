@@ -5,6 +5,7 @@ currentVersionHandyTools = '20230327'
 
 import os
 import sys
+import shutil
 separatorCharacter = '\\' if sys.platform == 'win32' else '/'
 
 import path
@@ -257,7 +258,9 @@ class HandyTools:
             try:
         
                 np.save (fileNameWithExtension, contentToSave)
-                os.rename (fileNameWithExtension + '.npy', fileNameWithExtension)
+                
+                # os.rename does not work on Windows when the destination file already exists.
+                shutil.move (fileNameWithExtension + '.npy', fileNameWithExtension)
         
                 fileSaved = True
 
