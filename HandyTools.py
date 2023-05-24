@@ -173,11 +173,60 @@ class HandyTools:
         except:
         
             return ''
-            
-    
+
+
+
+    # Read and return the content of a text file.
+    def getTextFileContent (textFileNameAndPath):
+        '''
+        :param textFileNameAndPath:
+        :type textFileNameAndPath: str
         
+        :return: content of file with \n chopped off.
+        :rtype: list (str)
+
+        D**Description:**
+        Open, read and return the content of a text file.
+        Make sure to delete any \n characters at the end of lines that may exist.
+        Returns empty list if the file does not exist or there is an error in the reading.
+        '''
+
+        if os.path.isfile (textFileNameAndPath):
+
+            try:
+                              
+                fileOpen = open (textFileNameAndPath, 'r')
+                fileContent = fileOpen.readlines ()
+                fileOpen.close ()
+
+                fileContentClean = []
+                for fileLine in fileContent:
+                                
+                    fileContentClean.append ( fileLine [:-1] if fileLine [-1] == '\n'  else  fileLine )
+        
+                return fileContentClean
+                
+            except:
+                
+                print ('')
+                print ('---WARNING---')
+                print (' From HandyTools.getTextFileContent: ')
+                print ('  file {} cannot be opened and / or read correctly.'.format (textFileNameAndPath))                
+                return []
+
+            
+        else:
+ 
+            print ('')
+            print ('---WARNING---')
+            print (' From HandyTools.getTextFileContent: ')
+            print ('  Warning: file {} does not exist!'.format (textFileNameAndPath))                
+            return []
+        
+            
+                   
     # Save content (list, dictionary, ...) to a numpy file with a custom extension.
-    def saveContentToNumpyWithCustomExtension (contentToSave, fileName, extensionWithoutDot):
+    def saveContentToNumpyWithCustomExtension (contentToSave, fileName, extensionWithoutDot, overWrite = False):
         '''
         :param contentToSave:
         
@@ -187,8 +236,11 @@ class HandyTools:
         :param extensionWithoutDot:
         :type extensionWithoutDot: str
         
+        :param overWrite: 
+        :type overWrite: bool
+        
         :return: file saved successful, file already exists.
-        :rtype:bool, bool
+        :rtype: bool, bool
         
         **Description:**
         Save content (list, dictionary, ...) to a numpy file with a custom extension.
@@ -198,7 +250,7 @@ class HandyTools:
         fileSaved = False
 
         # Only attempt to save if the file does not yet exist.
-        if not os.path.isfile (fileNameWithExtension):
+        if not os.path.isfile (fileNameWithExtension) or overWrite:
         
             fileAlreadyExists = False            
 
