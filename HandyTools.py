@@ -178,10 +178,13 @@ class HandyTools:
 
 
     # Read and return the content of a text file.
-    def getTextFileContent (textFileNameAndPath):
+    def getTextFileContent (textFileNameAndPath, stripLineFromBlanks = False):
         '''
         :param textFileNameAndPath:
         :type textFileNameAndPath: str
+        
+        :param stripLineFromBlanks:
+        :type stripLineFromBlanks: bool
         
         :return: content of file with \n chopped off.
         :rtype: list (str)
@@ -189,6 +192,7 @@ class HandyTools:
         D**Description:**
         Open, read and return the content of a text file.
         Make sure to delete any \n characters at the end of lines that may exist.
+        If the stripLineFromBlanks bpolean is True, then also strip any blank spaces at the beginning and end of a string.
         Returns empty list if the file does not exist or there is an error in the reading.
         '''
 
@@ -204,6 +208,11 @@ class HandyTools:
                 for fileLine in fileContent:
                                 
                     fileContentClean.append ( fileLine [:-1] if fileLine [-1] == '\n'  else  fileLine )
+
+                    if stripLineFromBlanks:
+                    
+                        fileContentClean [-1].strip ()
+
         
                 return fileContentClean
                 
