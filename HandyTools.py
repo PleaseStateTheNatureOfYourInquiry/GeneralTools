@@ -108,17 +108,20 @@ class HandyTools:
                     listOfFileNames.pop (iDelete)
 
         
-        print (EMCSystem)
         # If on the EMC system, then make sure that the absolute paths are all starting with the standardRootPath = '\\\\department-m.erasmusmc.nl\\card\\Data'
         if EMCSystem:
         
             for iFileName in range ( len (listOfFileNames) ):
             
-                print (iFileName, listOfFileNames [iFileName])
                 if 'V:' in listOfFileNames [iFileName]:
                 
-                    listOfFileNames [iFileName].replace ('V:', '\\\\department-m.erasmusmc.nl\\card\\Data')
+                    listOfFileNames [iFileName] = listOfFileNames [iFileName].replace ('V:', '\\\\department-m.erasmusmc.nl\\card\\Data')
+
+
+                if '\\\\storage.erasmusmc.nl\\v\\vcl09\\CARD\\Data' in listOfFileNames [iFileName]:
                 
+                    listOfFileNames [iFileName] = listOfFileNames [iFileName].replace ('\\\\storage.erasmusmc.nl\\v\\vcl09\\CARD\\Data', '\\\\department-m.erasmusmc.nl\\card\\Data')
+                    
 
 
         return listOfFileNames
