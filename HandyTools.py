@@ -415,7 +415,10 @@ class HandyTools:
         # Get the start time of the function's execution. This is the default.
         if not startTime:
         
-            print ( ' ' * indent * 3 + ' --> Start time of {} retrieved'.format (functionName) )
+            if printResult:
+            
+                print ( ' ' * indent * 3 + ' --> Start time of {} retrieved'.format (functionName) )
+        
             return time.time ()
         
 
