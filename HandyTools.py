@@ -18,7 +18,6 @@ except:
     EMCSystem = False
 
 
-import path
 from pathlib import Path
 
 import datetime
