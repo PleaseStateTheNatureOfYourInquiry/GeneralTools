@@ -1,7 +1,7 @@
 # HandyTools: a Python pseudo-class
 # Author = Maarten Roos
 
-currentVersionHandyTools = '20230529'
+currentVersionHandyTools = '20231103'
 
 import os
 import sys
@@ -448,7 +448,6 @@ class HandyTools:
         segmentStartindices = []
         segmentStartindices.append (0)
 
-        segmentStartIndex = 0
         for iSample in range (1, len (dataValuesList) - 1):
 
             deltaValue = dataValuesList [iSample + 1] - dataValuesList [iSample]
@@ -460,9 +459,7 @@ class HandyTools:
             else:
 
                 segmentAmplitudes.append (deltaValue)
-
-                segmentStartindices.append (segmentStartIndex)
-                segmentStartIndex = iSample
+                segmentStartindices.append (iSample)
 
 
         segmentAmplitudes = np.asarray (segmentAmplitudes)        
