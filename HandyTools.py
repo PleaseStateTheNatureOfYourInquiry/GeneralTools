@@ -18,6 +18,11 @@ except:
     EMCSystem = False
 
 
+if not EMCSystem:
+
+    import HandyToolsPYtoCPP
+
+
 from pathlib import Path
 
 import datetime
@@ -435,38 +440,47 @@ class HandyTools:
 
     # Used in the  getUncertaintyLevelInElectrode  method and by  AnnotationTool  in te NoiseViewer method.
     # Determine the list of amplitude segments for the electrogram.
-    def getListOfAmplitudeSegmentsFromDataValuesList (dataValuesList):
+    def getListOfAmplitudeSegmentsFromDataValues (dataValues, PYtoCPP = False):
         '''
         Determine the list of amplitude segments from a list of wobbling data values.
         '''
 
-        np.seterr (all = 'ignore')
+        if not PYtoCPP:
+        
+            np.seterr (all = 'ignore')
 
-        segmentAmplitudes = []
-        segmentAmplitudes.append (dataValuesList [1] - dataValuesList [0])
+            segmentAmplitudes = []
+            segmentAmplitudes.append (dataValues [1] - dataValues [0])
 
-        segmentStartindices = []
-        segmentStartindices.append (0)
+            segmentStartindices = []
+            segmentStartindices.append (0)
 
-        for iSample in range (1, len (dataValuesList) - 1):
+            for iSample in range (1, len (dataValues) - 1):
 
-            deltaValue = dataValuesList [iSample + 1] - dataValuesList [iSample]
+                deltaValue = dataValues [iSample + 1] - dataValues [iSample]
 
-            if (segmentAmplitudes [-1] > 0 and deltaValue >= 0) or (segmentAmplitudes [-1] < 0 and deltaValue <= 0):
+                if (segmentAmplitudes [-1] > 0 and deltaValue >= 0) or (segmentAmplitudes [-1] < 0 and deltaValue <= 0):
 
-                segmentAmplitudes [-1] += deltaValue
+                    segmentAmplitudes [-1] += deltaValue
 
-            else:
+                else:
 
-                segmentAmplitudes.append (deltaValue)
-                segmentStartindices.append (iSample)
+                    segmentAmplitudes.append (deltaValue)
+                    segmentStartindices.append (iSample)
 
 
-        segmentAmplitudes = np.asarray (segmentAmplitudes)        
-        segmentStartindices = np.asarray (segmentStartindices)
+            segmentAmplitudes = np.asarray (segmentAmplitudes)        
+            segmentStartindices = np.asarray (segmentStartindices)
                 
-        return segmentAmplitudes, segmentStartindices
+            return segmentAmplitudes, segmentStartindices
+
    
+        # Only run this on the Mac ... for now ...
+        elif PYtoCPP and not EMCSystem:
+                  
+            return HandyToolsPYtoCPP.getListOfAmplitudeSegmentsPYtoCPP (dataValues)
+
+
 
 
     # Pass a given input signal through a notch filter.
