@@ -1,7 +1,7 @@
 # HandyTools: a Python pseudo-class
 # Author = Maarten Roos
 
-currentVersionHandyTools = '20231103'
+currentVersionHandyTools = '20231215'
 
 import os
 import sys
@@ -20,7 +20,13 @@ except:
 
 if not EMCSystem:
 
-    import HandyToolsPYtoCPP
+    try:
+    
+        import HandyToolsPYtoCPP
+        
+    except:
+    
+        EMCSystem = True
 
 
 from pathlib import Path
