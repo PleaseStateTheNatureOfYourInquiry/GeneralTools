@@ -24,26 +24,41 @@ getListOfAmplitudeSegments::getListOfAmplitudeSegments ( short dataValues [1], u
 
     // Initialise the  segmentAmplitudes  first value with the first difference in  dataValues .
     segmentAmplitudes [numberOfSegments] = dataValues [1] - dataValues [0];
+        
     segmentStartIndices [numberOfSegments] = 0;
     int numberOfSamplesInSegment = 1;
     
     // Initialise the steepest segment variables.
-    int steepestNegativeSlope = 0;
+    float steepestNegativeSlope = 0;
     iSteepestNegativeSlopeSegment = 0;
     iSegmentStartIndicesSteepestNegativeSlope = 0;
 
-    int steepestPositiveSlope = 0;
+    float steepestPositiveSlope = 0;
     iSteepestPositiveSlopeSegment = 0;
     iSegmentStartIndicesSteepestPositiveSlope = 0;
       
 
+    int iSegmentBefore = numberOfSegments;
     // Go through the  dataValues  list.
     for (unsigned int iSample = 1; iSample < numberOfDataValues - 1; iSample++){
  
-        deltaValue =  dataValues [iSample + 1] - dataValues [iSample];
+        deltaValue = dataValues [iSample + 1] - dataValues [iSample];
         
-        // If the difference between the next pair of dataValues has the same sign as the last  segmentAmplitudes  value, then add it.
-        if ( ( segmentAmplitudes [numberOfSegments] > 0 and deltaValue >= 0 ) or (segmentAmplitudes [numberOfSegments] < 0 and deltaValue <= 0) )
+        // Determine the closest segment back in time that has a non-zero delta value to compare to the current delta value.
+        iSegmentBefore = numberOfSegments;
+        if (deltaValue == 0)
+        {
+        
+          while ( iSegmentBefore >= 0 && segmentAmplitudes [numberOfSegments] == 0 )
+          
+              iSegmentBefore--;
+        
+        };
+        
+          
+        // The "=" in "segmentAmplitudes [iSegmentBefore] >=" and "segmentAmplitudes [iSegmentBefore] <=" is to deal with the situation when the 
+        //  list of data points starts as a flat line, i.e. the first segments have a delta of zero.
+        if ( ( segmentAmplitudes [iSegmentBefore] >= 0 && deltaValue >= 0 ) || (segmentAmplitudes [iSegmentBefore] <= 0 && deltaValue <= 0) )
         {
         
             segmentAmplitudes [numberOfSegments] += deltaValue;
@@ -56,7 +71,7 @@ getListOfAmplitudeSegments::getListOfAmplitudeSegments ( short dataValues [1], u
         {
                    
             segmentDurations [numberOfSegments] = numberOfSamplesInSegment;
-            segmentSlopes [numberOfSegments] = static_cast<float> ( segmentAmplitudes [numberOfSegments] ) / segmentDurations [numberOfSegments];
+            segmentSlopes [numberOfSegments] = static_cast <float> ( segmentAmplitudes [numberOfSegments] ) / segmentDurations [numberOfSegments];
 
             // Reset the number of samples in the new segment to 1.
             numberOfSamplesInSegment = 1;
