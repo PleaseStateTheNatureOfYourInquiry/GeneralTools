@@ -454,13 +454,20 @@ class HandyTools:
 
     # Used in the  getUncertaintyLevelInElectrode  method and by  AnnotationTool  in te NoiseViewer method.
     # Determine the list of amplitude segments for the electrogram.
-    def getListOfAmplitudeSegmentsFromDataValues (dataValues, PYtoCPP = True):
+    def getListOfAmplitudeSegmentsFromDataValues (dataValues, PYtoCPP = False):
         '''
         Determine the list of amplitude segments from a list of wobbling data values.
         '''
 
-        if not PYtoCPP:
-        
+        # Run this function in C++ per default.
+        if PYtoCPP:
+
+            return HandyToolsPYtoCPP.getListOfAmplitudeSegmentsPYtoCPP (dataValues)
+
+
+        # Run the Python version (which needs updating to match the C++ code!).
+        else:
+                
             np.seterr (all = 'ignore')
 
             segmentAmplitudes = []
@@ -487,12 +494,7 @@ class HandyTools:
             segmentStartindices = np.asarray (segmentStartindices)
                 
             return segmentAmplitudes, segmentStartindices
-
    
-        # Only run this on the Mac ... for now ...
-        else:
-                  
-            return HandyToolsPYtoCPP.getListOfAmplitudeSegmentsPYtoCPP (dataValues)
 
 
 
