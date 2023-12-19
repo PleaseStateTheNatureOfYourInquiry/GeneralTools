@@ -490,7 +490,7 @@ class HandyTools:
 
    
         # Only run this on the Mac ... for now ...
-        elif PYtoCPP and not EMCSystem:
+        else:
                   
             return HandyToolsPYtoCPP.getListOfAmplitudeSegmentsPYtoCPP (dataValues)
 
