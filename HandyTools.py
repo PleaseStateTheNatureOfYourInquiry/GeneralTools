@@ -1,13 +1,27 @@
 # HandyTools: a Python pseudo-class
 # Author = Maarten Roos
 
-currentVersionHandyTools = '20231215'
+currentVersionHandyTools = '20231219'
 
+# Standard imports.
 import os
 import sys
 import shutil
 separatorCharacter = '\\' if sys.platform == 'win32' else '/'
 
+
+from pathlib import Path
+
+import datetime
+import time
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+from scipy import signal
+
+
+# Custom imports
 try:
 
     from archiveToolConfiguration import *
@@ -29,15 +43,9 @@ except:
 #         EMCSystem = True
 # 
 
-from pathlib import Path
 
-import datetime
-import time
+import HandyToolsPYtoCPP
 
-import matplotlib.pyplot as plt
-import numpy as np
-
-from scipy import signal
 
 
 class HandyTools:
