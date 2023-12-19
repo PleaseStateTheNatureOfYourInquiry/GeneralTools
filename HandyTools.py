@@ -18,16 +18,16 @@ except:
     EMCSystem = False
 
 
-if not EMCSystem:
-
-    try:
-    
-        import HandyToolsPYtoCPP
-        
-    except:
-    
-        EMCSystem = True
-
+# if not EMCSystem:
+# 
+#     try:
+#     
+#         import HandyToolsPYtoCPP
+#         
+#     except:
+#     
+#         EMCSystem = True
+# 
 
 from pathlib import Path
 
@@ -446,7 +446,7 @@ class HandyTools:
 
     # Used in the  getUncertaintyLevelInElectrode  method and by  AnnotationTool  in te NoiseViewer method.
     # Determine the list of amplitude segments for the electrogram.
-    def getListOfAmplitudeSegmentsFromDataValues (dataValues, PYtoCPP = False):
+    def getListOfAmplitudeSegmentsFromDataValues (dataValues, PYtoCPP = True):
         '''
         Determine the list of amplitude segments from a list of wobbling data values.
         '''
