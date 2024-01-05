@@ -454,9 +454,31 @@ class HandyTools:
 
     # Used in the  getUncertaintyLevelInElectrode  method and by  AnnotationTool  in te NoiseViewer method.
     # Determine the list of amplitude segments for the electrogram.
-    def getListOfAmplitudeSegmentsFromDataValues (dataValues, PYtoCPP = False):
-        '''
-        Determine the list of amplitude segments from a list of wobbling data values.
+    def getListOfAmplitudeSegmentsFromDataValues (dataValues, PYtoCPP = True):
+        '''    
+        dataValues: 
+    
+            converted to a short (np.short / int16)
+
+    
+        returns tuple:
+    
+            [0]  numberOfSegments
+            [1]  segmentStartIndices [0:numberOfSegments]
+            [2]  segmentAmplitudes [0:numberOfSegments]
+            [3]  segmentSlopes [0:numberOfSegments]
+            [4]  segmentDurations [0:numberOfSegments]
+            [5]  numberOfSegmentsNegative
+            [6]  segmentStartIndicesNegative [0:numberOfSegmentsNegative]
+            [7]  iSteepestNegativeSlopeSegment
+            [8]  iSegmentStartIndicesSteepestNegativeSlope
+            [9]  numberOfSegmentsPositive
+            [10] segmentStartIndicesPositive [0:numberOfSegmentsPositive]
+            [11] iSteepestPositiveSlopeSegment
+            [12] iSegmentStartIndicesSteepestPositiveSlope
+            
+        **Description:**        
+        Determine the list of amplitude segments from a list of data values.
         '''
 
         # Run this function in C++ per default.
