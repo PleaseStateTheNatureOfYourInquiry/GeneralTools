@@ -473,8 +473,7 @@ class HandyTools:
         # Run this function in C++ per default.
         if PYtoCPP:
 
-            pass
-#             return HandyToolsPYtoCPP.getListOfAmplitudeSegmentsPYtoCPP (dataValues)
+            return HandyToolsPYtoCPP.getListOfAmplitudeSegmentsPYtoCPP (dataValues)
 
 
         # Run the Python version (which needs updating to match the C++ code!).
