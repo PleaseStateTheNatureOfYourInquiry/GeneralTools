@@ -44,8 +44,13 @@ except:
 # 
 
 
-# import HandyToolsPYtoCPP
+try:
 
+    import HandyToolsPYtoCPP
+
+except:
+
+    pass
 
 
 class HandyTools:
