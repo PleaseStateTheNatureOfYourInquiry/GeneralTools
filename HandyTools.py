@@ -32,25 +32,9 @@ except:
     EMCSystem = False
 
 
-# if not EMCSystem:
-# 
-#     try:
-#     
-#         import HandyToolsPYtoCPP
-#         
-#     except:
-#     
-#         EMCSystem = True
-# 
 
+import HandyToolsPYtoCPP
 
-try:
-
-    import HandyToolsPYtoCPP
-
-except:
-
-    pass
 
 
 class HandyTools:
