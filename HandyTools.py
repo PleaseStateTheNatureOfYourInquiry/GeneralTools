@@ -44,7 +44,7 @@ except:
 # 
 
 
-import HandyToolsPYtoCPP
+# import HandyToolsPYtoCPP
 
 
 
@@ -454,7 +454,7 @@ class HandyTools:
 
     # Used in the  getUncertaintyLevelInElectrode  method and by  AnnotationTool  in te NoiseViewer method.
     # Determine the list of amplitude segments for the electrogram.
-    def getListOfAmplitudeSegmentsFromDataValues (dataValues, PYtoCPP = True):
+    def getListOfAmplitudeSegmentsFromDataValues (dataValues, PYtoCPP = False):
         '''    
         dataValues: 
     
@@ -484,7 +484,8 @@ class HandyTools:
         # Run this function in C++ per default.
         if PYtoCPP:
 
-            return HandyToolsPYtoCPP.getListOfAmplitudeSegmentsPYtoCPP (dataValues)
+            pass
+#             return HandyToolsPYtoCPP.getListOfAmplitudeSegmentsPYtoCPP (dataValues)
 
 
         # Run the Python version (which needs updating to match the C++ code!).
