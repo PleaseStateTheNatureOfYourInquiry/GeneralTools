@@ -468,7 +468,9 @@ class HandyTools:
             
         **Description:**        
         Determine the list of amplitude segments from a list of data values.
-        Note that values will be converted to and returned as int16 (short)!
+        Note that values will be converted to int16 (short)!
+        
+        Also note that the deltaValue HAS TO BE an int32 at least, and not int16 hence the int-function in the Python version (same)
         '''
 
         # Run this function with the C++ core per default.
@@ -483,14 +485,14 @@ class HandyTools:
             np.seterr (all = 'ignore')
 
             segmentAmplitudes = []
-            segmentAmplitudes.append (dataValues [1] - dataValues [0])
+            segmentAmplitudes.append (int (dataValues [1]) - int (dataValues [0]))
 
             segmentStartindices = []
             segmentStartindices.append (0)
 
             for iSample in range (1, len (dataValues) - 1):
-
-                deltaValue = dataValues [iSample + 1] - dataValues [iSample]
+            
+                deltaValue = int (dataValues [iSample + 1]) - int (dataValues [iSample])
 
                 if (segmentAmplitudes [-1] > 0 and deltaValue >= 0) or (segmentAmplitudes [-1] < 0 and deltaValue <= 0):
 
