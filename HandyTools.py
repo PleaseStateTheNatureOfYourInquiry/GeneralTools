@@ -1,7 +1,7 @@
 # HandyTools: a Python pseudo-class
 # Author = Maarten Roos
 
-currentVersionHandyTools = '20231219'
+currentVersionHandyTools = '20240112'
 
 # Standard imports.
 import os
@@ -468,9 +468,10 @@ class HandyTools:
             
         **Description:**        
         Determine the list of amplitude segments from a list of data values.
+        Note that values will be converted to and returned as int16 (short)!
         '''
 
-        # Run this function in C++ per default.
+        # Run this function with the C++ core per default.
         if PYtoCPP:
 
             return HandyToolsPYtoCPP.getListOfAmplitudeSegmentsPYtoCPP (dataValues)
