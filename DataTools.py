@@ -24,6 +24,7 @@ from scipy import signal
 # Custom imports
 
 import DataWranglingToolsPYtoCPP
+import FilterToolsPYtoCPP
 
 
 
@@ -101,7 +102,17 @@ class DataTools:
             segmentStartindices = np.asarray (segmentStartindices)
                 
             return segmentAmplitudes, segmentStartindices
-   
+
+
+    #
+    def passAverageFilter (listOfNumbers, widthOfWindow):
+        '''
+        '''
+        
+
+        return FilterToolsPYtoCPP.passAverageFilterPYtoCPP (listOfNumbers, widthOfWindow)
+        
+       
 
     # Pass a given input signal through a notch filter.
     def getNotchFilteredSignal (inputSignal, samplingFrequency = 1000, notchFrequency = 50, qualityFactor = 20):
