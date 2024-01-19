@@ -37,7 +37,7 @@ class DataTools:
 
     # Used in the  getUncertaintyLevelInElectrode  method and by  AnnotationTool  in te NoiseViewer method.
     # Determine the list of amplitude segments for the electrogram.
-    def getListOfAmplitudeSegmentsFromDataValues (dataValues, PYtoCPP = True):
+    def getSegmentStatisticsFromDataValues (dataValues, PYtoCPP = True):
         '''    
         dataValues: 
     
