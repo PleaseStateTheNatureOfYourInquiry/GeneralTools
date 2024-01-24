@@ -37,7 +37,7 @@ class DataTools:
 
     # Used in the  getUncertaintyLevelInElectrode  method and by  AnnotationTool  in te NoiseViewer method.
     # Determine the list of amplitude segments for the electrogram.
-    def getSegmentStatisticsFromDataValues (dataValues, PYtoCPP = True):
+    def getSegmentSpecsFromDataValues (dataValues, PYtoCPP = True):
         '''    
         dataValues: 
     
@@ -70,7 +70,7 @@ class DataTools:
         # Run this function with the C++ core per default.
         if PYtoCPP:
 
-            return DataWranglingToolsPYtoCPP.getListOfAmplitudeSegmentsPYtoCPP (dataValues)
+            return DataWranglingToolsPYtoCPP.getSegmentSpecsFromDataValuesPYtoCPP (dataValues)
 
 
         # Run the Python version (which needs updating to match the C++ code!).
