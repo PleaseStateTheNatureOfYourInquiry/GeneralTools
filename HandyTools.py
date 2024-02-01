@@ -430,7 +430,7 @@ class HandyTools:
         # If  printResult  is True, then print the end time, given the  startTime.        
         elif printResult:
         
-            print ( ' ' * indent * 3 + ' --> Run time for {} = {:9.4f}s'.format (functionName, time.time () - startTime) )
+            print ( ' ' * indent * 3 + ' --> Run time for {} = {:10.6f}s'.format (functionName, time.time () - startTime) )
         
         # If  printResult  is False, then return the end time, given the  startTime.
         else:

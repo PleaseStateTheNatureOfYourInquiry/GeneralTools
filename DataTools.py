@@ -1,7 +1,7 @@
 # DataTools: a Python pseudo-class
 # Author = Maarten Roos
 
-DataToolsVersion = '20240117'
+DataToolsVersion = '20240201'
 
 # Standard imports.
 import os
@@ -355,9 +355,61 @@ class DataTools:
 
 
 
+    #
+    def getAverageVarAndSDPYtoCPP (dataValues = [], removeNaN = False):
+        '''
+        '''
+
+        if removeNaN:
+              
+            dataValues = DataTools.getNanFreeNumpyArray (dataValues)
+
+    
+        if len (dataValues):
+                    
+            averagevalues, standardDeviation, variance = DataWranglingToolsPYtoCPP.getAverageVarAndSDPYtoCPP (dataValues)
+            return averagevalues, standardDeviation, variance
+
+        else:
+        
+            return None, None, None
 
 
+    #
+    def getMedianAndQuantilesPYtoCPP (dataValues = [], lowerQuantilePercentage = 25, upperQuantilePercentage = 75, removeNaN = False):
+        '''
+        '''
+
+        if removeNaN:
+              
+            dataValues = DataTools.getNanFreeNumpyArray (dataValues)
+ 
+    
+        if len (dataValues):
+    
+            medianValue, lowerQuantileValue, upperQuantileValue = \
+             DataWranglingToolsPYtoCPP.getMedianAndQuantilesPYtoCPP (dataValues, lowerQuantilePercentage / 100, upperQuantilePercentage / 100)   
+            return medianValue, lowerQuantileValue, upperQuantileValue
+
+        else:
+        
+            return None, None, None
 
 
+    #
+    def getNanFreeNumpyArray (dataValues):
+        '''
+        '''
+        
+        if type (dataValues) == list:
+                
+            iNaNValues = np.isnan ( np.asarray (dataValues) )           
+            return np.asarray (dataValues) [~iNaNValues]
+        
+        else:
+        
+            iNaNValues = np.isnan (dataValues)            
+            return dataValues [~iNaNValues]
+            
 
 
