@@ -1,7 +1,7 @@
 # HandyTools: a Python pseudo-class
 # Author = Maarten Roos
 
-currentVersionHandyTools = '20240117'
+currentVersionHandyTools = '20240205'
 
 # Standard imports.
 import os
@@ -45,11 +45,29 @@ class HandyTools:
 
 
     # A handy function to get the list of absolute paths of all files of a certain extension (default .png) down a directory tree
+    @staticmethod
     def getFilesInDirectoryTree (startPath, extension = '', stringsToExclude = [], checkStartPathOnly = False):
         '''
+        :param startPath: directory where to start the search.
+        :type startPath: str
+
+        :param extension: extension of files to return. If ``extension = ''``, then all files are returned. If ``extension = ''`` and ``checkStartPathOnly = True``, then all files and directories in ``startPath`` are returned.
+        :type extension: str
+
+        :param stringsToExclude: list of strings that when in the file name are excluded from the file list.
+        :type stringsToExclude: list [str]
+
+        :param checkStartPathOnly: if ``True``, then only search the startPath folder.
+        :type checkStartPathOnly: bool; default = ``False`` 
+
+        :return: list of file names and absolute paths of all the files ending on ``extension`` down the directory tree starting at ``startPath``.
+        :rtype: list [str]  
+
+
         **Description:**
-        Determine a list of strings that contain all the files paths/names ending on  extension  down the directory tree starting at  startPath .
-         startPath  is the point in the directory tree where to start. The function then looks down the tree and seeks out all the files.
+        This function is used to perform a recursively search for all files with a user defined ``extension``, starting at the user defined ``startPath`` in the directory tree. 
+        Files that contain any of the strings in the  ``stringsToExclude`` list, are excluded from the returned file list. If the boolean `checkStartPathOnly`` is set to ``True``, 
+        then the search is restricted to the ``startPath`` folder only.
         '''
 
         dirPath = Path (startPath)
@@ -134,15 +152,16 @@ class HandyTools:
 
 
     # Get the absolute path for a file.
+    @staticmethod
     def getFileAndAbsolutePath (fileName):
         '''
         :param fileName: file name (and path) of the file.
         
-        :return: absolute path and file name, absolute directory, just the file name.
+        :return: absolute path and file name, absolute directory, file name without path.
         :rtype: str, str, str
 
         **Description:**    
-        Get the absolute path, directory and root (just the file name) for a file.
+        Get the full absolute path, absolute directory and root (= file name without path) of a file.
         If '' are returned, then the file does not exist and an error message is printed to the Python console.
         '''
         
@@ -168,21 +187,23 @@ class HandyTools:
 
   
     # Create the full path for a given file with full path or just full path.   
+    @staticmethod
     def createPathToFile (fileNameAndFullPath = '', fullPath = ''):
         '''
         :param fileNameAndFullPath: file name with full path.
-        :type fileNameAndFullPath: stringsToExclude
+        :type fileNameAndFullPath: str
         
-        :param fullPath: full Path
+        :param fullPath: full path.
         :type fullPath: str
         
-        :return: full path
+        :return: full path created by the system.
         :rtype: str
         
         **Description:**
-        Create the full path for a given file with full path (``fileNameAndFullPath`` string) or just full path (``fullPath`` string).
+        Create the full path (all the folders in the directory tree) for a given file with full path ``fileNameAndFullPath``, or just full path ``fullPath``.
         Return the full path that has been created as a string.
-        If not successful (full path already exists or cannot be created due to writing permission restrictions), then return an empty string.
+        If not successful, because full path already exists or cannot be created due to writing permission restrictions, then return an empty string.
+        The ``os.makedirs`` method is used.
         '''
 
 
@@ -208,21 +229,22 @@ class HandyTools:
 
 
     # Read and return the content of a text file.
+    @staticmethod
     def getTextFileContent (textFileNameAndPath, stripLineFromBlanks = False):
         '''
-        :param textFileNameAndPath:
+        :param textFileNameAndPath: file name (and path) of the text file to load.
         :type textFileNameAndPath: str
         
-        :param stripLineFromBlanks:
-        :type stripLineFromBlanks: bool
+        :param stripLineFromBlanks: set to ``True`` to strip empty spaces from the beginning and end of each line.
+        :type stripLineFromBlanks: bool; default = False
         
-        :return: content of file with \n chopped off.
+        :return: content of file with *\\\\n* chopped off.
         :rtype: list (str)
 
-        D**Description:**
+        **Description:**
         Open, read and return the content of a text file.
-        Make sure to delete any \n characters at the end of lines that may exist.
-        If the stripLineFromBlanks boolean is True, then also strip any blank spaces at the beginning and end of a string.
+        Any *\\\\n* (= next line) characters at the end of lines are stripped.
+        If the ``stripLineFromBlanks`` boolean is set to ``True``, then also strip any blank spaces at the beginning and end of the lines.
         Returns empty list if the file does not exist or there is an error in the reading.
         '''
 
@@ -266,24 +288,27 @@ class HandyTools:
             
                    
     # Save content (list, dictionary, ...) to a numpy file with a custom extension.
+    @staticmethod
     def saveContentToNumpyWithCustomExtension (contentToSave, fileName, extensionWithoutDot, overWrite = False):
         '''
-        :param contentToSave:
+        :param contentToSave: any content that the user wants to save to the numpy-format file.
+        :type: anything!
         
-        :param fileName:
+        :param fileName: the file name of the file to be saved.
         :type fileName: str
  
-        :param extensionWithoutDot:
+        :param extensionWithoutDot: the extension of the file name to be saved.
         :type extensionWithoutDot: str
         
-        :param overWrite: 
-        :type overWrite: bool
+        :param overWrite: if set to ``True``, then overwrite any file with the same file name that might already exist.
+        :type overWrite: bool; default = False
         
-        :return: file saved successful, file already exists.
+        :return: two booleans, the first for file saved successfully, the second for if the file already existed.
         :rtype: bool, bool
         
         **Description:**
-        Save content (list, dictionary, ...) to a numpy file with a custom extension.
+        Save content (list, dictionary, ...) to a numpy file with a custom extension ``extensionWithoutDot``. If the file already exists, then it is overwritten only 
+        if the used set the ``overWrite`` boolean to ``True``.
         '''
     
         fileNameWithExtension = fileName + '.' + extensionWithoutDot
@@ -318,10 +343,16 @@ class HandyTools:
 
 
     # Get the date and time now.
+    @staticmethod
     def getDateAndTime ():
         '''
+        :return: dateandtime.dataandtime object.
+        :rtype: dateandtime.dataandtimeobject
+
         **Description:**
-        Get the date and time now.
+        Obtain the date and time of the moment of the call of this function. The result is returned as a dataandtime.dateandtime object.
+        This object has several attributes, for example *year*, *month*, *day*, *hour*, *minute* and *second*. Use ``dir`` for a full list of all attributes.
+        The ``dataandtime`` module is used in this function.
         '''
         
         # This try - except loop is needed because apparently between python versions the date module has changed some of its structure
@@ -339,10 +370,26 @@ class HandyTools:
 
 
     # Get the date and time now and return in a string format.
+    @staticmethod
     def getDateAndTimeString (includeYMD = True, dateFormat = 'YMD', includeHMS = True):
         '''
+        :param includeYMD: if set to ``True`` (default), then return the year, month and date.
+        :type includeYMD: bool; default = True
+        
+        :param dateFormat: three formats are option: YMD (default), DMY and MDY.
+        :type dateFormat: str
+ 
+        :param includeHMS: if set to ``True`` (default), then return the hour, minute and second.
+        :type includeHMS: bool; default = True
+        
+        :return: a string that contains the date and time in the format specified by the user.
+        :rtype: str
+        
+        
         **Description:**
-        Get the date and time now and return in a string format.
+        Obtain the date and time at the moment of the function call and return it as a string. The year month and date order can be specified by the user.
+        Per default the year month and date are returned with the hours, minutes and seconds. for example ``2024-02-05 at 10:44:23``.
+        The user can opt to only return the year, month and date in three different formats (YMD, DMY, or MDY) or only the hours, minutes and seconds.
         '''
       
         dateAndTime = HandyTools.getDateAndTime ()  
@@ -369,10 +416,21 @@ class HandyTools:
 
 
     # Calculate  Hours Minutes Seconds  from a total number of seconds
+    @staticmethod
     def getHMSFromTotalNumberOfSeconds (numberOfSecondsTotal = 0, numberOfDigitsAccuracy = 4):
         '''
+        :param numberOfSecondsTotal: the number of seconds to convert to hours, minutes and seconds.
+        :type numberOfSecondsTotal: float; default = 0
+ 
+        :param numberOfDigitsAccuracy: number of digits after the comma (default = 4).
+        :type numberOfDigitsAccuracy: int; default = 4
+        
+        :return: two lists, the first has the number of hours, number of minutes contained in the ``numberOfSecondsTotal`` given by the used, the seconds has the strings of these three values.
+        :rtype: list [float, float, float], list [str, str, str]
+        
+        
         **Description:**
-        Calculate  Hours Minutes Seconds
+        Calculate the number of hours, minutes and seconds that are in a given number of seconds. 
         '''
     
         numberOfHours = int (numberOfSecondsTotal / 3600)
@@ -387,34 +445,52 @@ class HandyTools:
 
     
     # Calculate the total number of seconds from an Hours Minutes Seconds list.
-    def getTotalNumberOfSecondsfromHMS (HMS = [0,0,0]):
+    @staticmethod
+    def getTotalNumberOfSecondsfromHMS ( HMS = [0,0,0] ):
         '''
+        :param HMS: list of the number of hours, minutes and seconds to convert to number of seconds.
+        :type HMS: list [int or str, int or str, float or str]
+        
+        :return: number of seconds contained in the number of hours, minutes and seconds given by the user.
+        :rtype: float
+               
         **Description:**
-        Calculate the total number of seconds from an Hours Minutes Seconds list.
-        HMS is a list of [int, int, float] or a list of three strings.
+        Calculate the total number of seconds from a list with the number of hours, minutes and seconds given by the user.
+        Note that each of the elements of the list with the hours, minutes and seconds can be given as an int (float) or string.   
         '''
         
-        try:
+        for iElement, element in enumerate (HMS):
         
-           numberOfHours = HMS [0]
-           numberOfMinutes = HMS [1]
-           numberOfSeconds = HMS [2]
-           
-        except:
-        
-           numberOfHours = int ( HMS [0] )
-           numberOfMinutes = int ( HMS [1] )
-           numberOfSeconds = float ( HMS [2] )
+            if type (element) == str:
             
+                HMS [iElement] = float (element)
+
             
-        return numberOfHours * 3600 + numberOfMinutes * 60 + numberOfSeconds
+        return HMS [0] * 3600 + HMS [1] * 60 + HMS [2]
 
 
 
     # Determine and print execution of a piece of code.
+    @staticmethod
     def getRunTime (functionName, startTime = None, indent = 0, printResult = True):
         '''
-        Determine and print execution of a piece of code.
+        :param functionName: a string with the name of the function or part of the code that is being speed checked.
+        :type functionName: str
+
+        :param startTime: the start time with respect to which the time of execution is measured. 
+        :type startTime: start time in seconds after start of epoch; default = None
+
+        :param indent: number of indents for printing, each indent is three empty spaces.
+        :type indent: int; default = 0
+
+        :param printResult: if ``True`` (default), then print a statement with the result.
+        :type printResult: bool; default = True
+        
+        :return: if ``startTime`` is ``None`` (default), then return the time of the call of this function in number of seconds since the start of the epoch (1 January 1970 at 00:00:00 UTC). If ``startTime`` is not ``None`` and  ``printResult`` is set to ``False``, then return the time passed between ``startTime`` and the time of the current call to this function in seconds.
+        :rtype: float
+        
+        **Description:**
+        With this function, the speed of execution of a piece of code can be evaluated. At the start of the (piece of) code, the start time can be retrieved by a call to the this function without ``startTime`` specified. The function returns the time at that moment (in number of seconds since the start of the epoch, which is defined as 1 January 1970 at 00:00:00 UTC). The user can specify the ``functionName`` string to print this information on the screen. After the execution of the (piece of) code, this function can be called again with the ``startTime`` retrieved earlier and the resulting number of seconds of the execution will be printed.
         '''
         
         # Get the start time of the function's execution. This is the default.

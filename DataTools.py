@@ -1,7 +1,7 @@
 # DataTools: a Python pseudo-class
 # Author = Maarten Roos
 
-DataToolsVersion = '20240201'
+DataToolsVersion = '20240205'
 
 # Standard imports.
 import os
@@ -21,11 +21,9 @@ import numpy as np
 from scipy import signal
 
 
-# Custom imports
-
+# Custom imports of the Python to C++ libraries.
 import DataWranglingToolsPYtoCPP
 import FilterToolsPYtoCPP
-
 
 
 
@@ -37,34 +35,36 @@ class DataTools:
 
     # Used in the  getUncertaintyLevelInElectrode  method and by  AnnotationTool  in te NoiseViewer method.
     # Determine the list of amplitude segments for the electrogram.
+    @staticmethod
     def getSegmentSpecsFromDataValues (dataValues, PYtoCPP = True):
         '''    
-        dataValues: 
-    
-            converted to a short (np.short / int16)
+        :param dataValues: list of values representing the data to be analysed. The values in the ``dataValues`` list are converted to int16 type (for now).
+        :type dataValues: list
 
+        :param PYtoCPP: at the time of writing, the user can still chose to use Python to analyse the ``dataValues`` by setting ``PYtoCPP`` to ``False``. The result is less comprehensive and the runtime significantly longer.
+        :type PYtoCPP: boolean; default = True
+
+        :return: all the characteristics of the segments comprised by the list of ``dataValues`` (see **Description** below) when ``PYtoCPP = True``, or list of amplitudes and start indices when ``PYtoCPP = False``.
+        :rtype: tuple when ``PYtoCPP = True`` or two lists, first list [same type as ``dataValues``] and second list [int]
+
+
+        **Description:**
+        With this function a list of data values is analysed to determine all the specifications in terms of its segments. A segment in a wiggling data values line is a section of the line from a local minimum to the next local maximum or a local maximum to the next local minimum. The specifications returned are:
     
-        returns tuple:
-    
-            [0]  numberOfSegments
-            [1]  segmentStartIndices [0:numberOfSegments]
-            [2]  segmentAmplitudes [0:numberOfSegments]
-            [3]  segmentSlopes [0:numberOfSegments]
-            [4]  segmentDurations [0:numberOfSegments]
-            [5]  numberOfSegmentsNegative
-            [6]  segmentStartIndicesNegative [0:numberOfSegmentsNegative]
-            [7]  iSteepestNegativeSlopeSegment
-            [8]  iSegmentStartIndicesSteepestNegativeSlope
-            [9]  numberOfSegmentsPositive
-            [10] segmentStartIndicesPositive [0:numberOfSegmentsPositive]
-            [11] iSteepestPositiveSlopeSegment
-            [12] iSegmentStartIndicesSteepestPositiveSlope
+            | [0]  numberOfSegments
+            | [1]  segmentStartIndices [0:numberOfSegments]
+            | [2]  segmentAmplitudes [0:numberOfSegments]
+            | [3]  segmentSlopes [0:numberOfSegments]
+            | [4]  segmentDurations [0:numberOfSegments]
+            | [5]  numberOfSegmentsNegative
+            | [6]  segmentStartIndicesNegative [0:numberOfSegmentsNegative]
+            | [7]  iSteepestNegativeSlopeSegment
+            | [8]  iSegmentStartIndicesSteepestNegativeSlope
+            | [9]  numberOfSegmentsPositive
+            | [10] segmentStartIndicesPositive [0:numberOfSegmentsPositive]
+            | [11] iSteepestPositiveSlopeSegment
+            | [12] iSegmentStartIndicesSteepestPositiveSlope
             
-        **Description:**        
-        Determine the list of amplitude segments from a list of data values.
-        Note that values will be converted to int16 (short)!
-        
-        Also note that the deltaValue HAS TO BE an int32 at least, and not int16 hence the int-function in the Python version (same)
         '''
 
         # Run this function with the C++ core per default.
@@ -105,18 +105,33 @@ class DataTools:
 
 
     #
-    def passAverageFilter (listOfNumbers, widthOfWindow):
+    @staticmethod
+    def passAverageFilter (dataValues, widthOfWindow):
         '''
+        :param dataValues: list of data values that represent the signal to be filtered.
+        :type dataValues: list 
+
+        :param widthOfWindow: half the width of the window: number of values to the left and to the right of the central value.
+        :type widthOfWindow: int
+
+        :return: signal ``dataValues`` filtered with a running average. 
+        :rtype: list 
+
+
+        **Description:**
         '''
         
 
-        return FilterToolsPYtoCPP.passAverageFilterPYtoCPP (listOfNumbers, widthOfWindow)
+        return FilterToolsPYtoCPP.passAverageFilterPYtoCPP (dataValues, widthOfWindow)
         
        
 
     # Pass a given input signal through a notch filter.
+    @staticmethod
     def getNotchFilteredSignal (inputSignal, samplingFrequency = 1000, notchFrequency = 50, qualityFactor = 20):
         '''
+        
+        **Description:**
         Pass a given input signal through a notch filter.
         '''
          
@@ -133,8 +148,11 @@ class DataTools:
 
 
     # Determine the values of the variables a and b for the linear least square solution y  =  a * x  +  b.
+    @staticmethod
     def linearLeastSquare (xInput, yInput):
         '''
+        
+        
         **Description:**
         Determine the values of the variables a and b for the linear least square solution y  =  a * x  +  b
         as well as their uncertainties.
@@ -177,11 +195,14 @@ class DataTools:
 
 
     # Calculate and plot the QQ-plot (or Quantile-Quantile plot) and the histogram of a given list of input values.
+    @staticmethod
     def QQPlot (xInput, xlabelToPrint = 'input values', ylabelToPrint = 'z (sigma)',
                 QQTitleToPrint = 'DataTools version ' + DataToolsVersion + ': QQ-plot of input data',
                 HistTitleToPrint = 'DataTools version ' + DataToolsVersion + ': Histogram of input data', 
                 plotTextAverageMedian = True):
         '''
+        
+        
         **Description:**
         Calculate and plot the QQ-plot (or Quantile-Quantile plot) and the histogram of a given list of input values.
         '''
@@ -295,8 +316,11 @@ class DataTools:
 
 
     # Calculate the gaussian normal cumulative distribution curve N(mu,sigma) between -5*sigma and +5*sigma at stepsize 0.05*sigma.
+    @staticmethod
     def getCumulativeNormalDistribution (mu,sigma):
         '''
+        
+        
         **Description:**
         Calculate the gaussian normal cumulative distribution curve N(mu,sigma) between -5*sigma and +5*sigma at stepsize 0.05*sigma.
 
@@ -322,8 +346,11 @@ class DataTools:
 
 
     # Calculate the gaussian normal distribution curve N(mu,sigma) between -5*sigma and +5*sigma at stepsize 0.05*sigma.
+    @staticmethod
     def getNormalDistribution (mu,sigma):
         '''
+        
+        
         **Description:**
         Calculate the gaussian normal distribution curve N(mu,sigma) between -5*sigma and +5*sigma at stepsize 0.05*sigma.
         
@@ -341,8 +368,11 @@ class DataTools:
 
 
     # The value of the gaussian normal distribution defined by N(mu, sigma) at xi.
+    @staticmethod
     def getNormalDistributionValue (xi,mu,sigma):
         '''
+        
+        
         **Description:**
         The value of the gaussian normal distribution defined by N(mu, sigma) at xi.
         
@@ -356,8 +386,11 @@ class DataTools:
 
 
     #
+    @staticmethod
     def getAverageVarAndSDPYtoCPP (dataValues = [], removeNaN = False):
         '''
+        
+        **Description:**
         '''
 
         if removeNaN:
@@ -376,8 +409,11 @@ class DataTools:
 
 
     #
+    @staticmethod
     def getMedianAndQuantilesPYtoCPP (dataValues = [], lowerQuantilePercentage = 25, upperQuantilePercentage = 75, removeNaN = False):
         '''
+        
+        **Description:**
         '''
 
         if removeNaN:
@@ -397,8 +433,11 @@ class DataTools:
 
 
     #
+    @staticmethod
     def getNanFreeNumpyArray (dataValues):
         '''
+        
+        **Description:**
         '''
         
         if type (dataValues) == list:
