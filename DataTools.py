@@ -1,7 +1,7 @@
 # DataTools: a Python pseudo-class
 # Author = Maarten Roos
 
-DataToolsVersion = '20240205'
+DataToolsVersion = '20240212'
 
 # Standard imports.
 import os
@@ -38,7 +38,7 @@ class DataTools:
     @staticmethod
     def getSegmentSpecsFromDataValues (dataValues, PYtoCPP = True):
         '''    
-        :param dataValues: list of values representing the data to be analysed. The values in the ``dataValues`` list are converted to int16 type (for now).
+        :param dataValues: list (one dimension) of data values. The values in the ``dataValues`` list are converted to int16 type (for now).
         :type dataValues: list
 
         :param PYtoCPP: at the time of writing, the user can still chose to use Python to analyse the ``dataValues`` by setting ``PYtoCPP`` to ``False``. The result is less comprehensive and the runtime significantly longer.
@@ -49,22 +49,23 @@ class DataTools:
 
 
         **Description:**
-        With this function a list of data values is analysed to determine all the specifications in terms of its segments. A segment in a wiggling data values line is a section of the line from a local minimum to the next local maximum or a local maximum to the next local minimum. The specifications returned are:
+        With this function a list of (wiggling) data values is analysed to determine all the specifications in terms of its segments. A segment in a wiggling data values line is a section of the line from a local minimum to the next local maximum or a local maximum to the next local minimum. The specifications are returned in terms of a tuple of NumPy arrays and numbers:
     
             | [0]  numberOfSegments
-            | [1]  segmentStartIndices [0:numberOfSegments]
-            | [2]  segmentAmplitudes [0:numberOfSegments]
-            | [3]  segmentSlopes [0:numberOfSegments]
-            | [4]  segmentDurations [0:numberOfSegments]
-            | [5]  numberOfSegmentsNegative
+            | [1]  segmentStartIndices - the start indices of each segment (the local minima and maxima).
+            | [2]  segmentAmplitudes - the corresponding amplitudes between local extremes in units of ADU.
+            | [3]  segmentSlopes - the corresponding slopes in units of ADU / time sample.
+            | [4]  segmentDurations - the number of time samples between local extremes.
+            | [5]  numberOfSegmentsNegative - subsection of the list above with only the segments from local maxima to the next local minima.
             | [6]  segmentStartIndicesNegative [0:numberOfSegmentsNegative]
             | [7]  iSteepestNegativeSlopeSegment
             | [8]  iSegmentStartIndicesSteepestNegativeSlope
-            | [9]  numberOfSegmentsPositive
+            | [9]  numberOfSegmentsPositive - subsection of the list above with only the segments from local minima to the next local maxima.
             | [10] segmentStartIndicesPositive [0:numberOfSegmentsPositive]
             | [11] iSteepestPositiveSlopeSegment
             | [12] iSegmentStartIndicesSteepestPositiveSlope
-            
+ 
+        When calling this function with :code:`PYtoCPP = False`, only list of segment amplitudes and segment start indices is being returned.           
         '''
 
         # Run this function with the C++ core per default.
@@ -108,10 +109,10 @@ class DataTools:
     @staticmethod
     def passAverageFilter (dataValues, widthOfWindow):
         '''
-        :param dataValues: list of data values that represent the signal to be filtered.
+        :param dataValues: list (one dimension) of data values that represent the signal to be filtered.
         :type dataValues: list 
 
-        :param widthOfWindow: half the width of the window: number of values to the left and to the right of the central value.
+        :param widthOfWindow: half the width of the window: number of values to the left and to the right of the central value. Total number of point in the window is :code:`2 * widthOfWindow + 1`.
         :type widthOfWindow: int
 
         :return: signal ``dataValues`` filtered with a running average. 
@@ -119,6 +120,9 @@ class DataTools:
 
 
         **Description:**
+        Use this function to perform a running average filtering of a list (one dimension) of data values. The total number of point in the averaging window is :code:`2 * widthOfWindow + 1`. At the beginning and the end of the list, filtering is done with the available data values. For example, the result for the first data value is the average of the first data value and the :code:`width` data values to the right. 
+        
+        The noise level of the filtered set can be easily calculated from the noise level of the original data values, by dividing by the square root of the total number of data values in the averaging window. 
         '''
         
 
@@ -130,9 +134,24 @@ class DataTools:
     @staticmethod
     def getNotchFilteredSignal (inputSignal, samplingFrequency = 1000, notchFrequency = 50, qualityFactor = 20):
         '''
+        :param inputSignal: list (one dimension) of data values that represent the signal to be filtered.
+        :type inputSignal: list 
+
+        :param samplingFrequency: 
+        :type samplingFrequency: float
+
+        :param notchFrequency: 
+        :type notchFrequency: float
+
+        :param qualityFactor: 
+        :type qualityFactor: float
+
+        :return: outputSignal, filterFrequency, amplitudedB
+        :rtype: list, float, float
+        
         
         **Description:**
-        Pass a given input signal through a notch filter.
+        Pass a given input signal through a notch filter, using the signal.iirnotch, signal.freqz and the signal.filtfilt (back and forth filtering) methods.
         '''
          
         # Design a notch filter using the signal.iirnotch method (Infinite Impulse Response)
@@ -151,11 +170,18 @@ class DataTools:
     @staticmethod
     def linearLeastSquare (xInput, yInput):
         '''
+        :param xInput: the x-values of the data to fit.
+        :type xInput: list [float]
+
+        :param yInput: the y-values of the data to fit.
+        :type yInput: list [float]
+
+        :return: a, b, uncertaintyA, uncertaintyB
+        :rtype: float, float, float, float
         
         
         **Description:**
-        Determine the values of the variables a and b for the linear least square solution y  =  a * x  +  b
-        as well as their uncertainties.
+        Determine the values of the variables a and b for the linear least square solution y (x) =  ax + b, along with their uncertainties, for a set of data points described by the x- and y-values.
         '''
     
         xInput = np.asarray (xInput)
@@ -194,6 +220,7 @@ class DataTools:
         return a, b, uncertaintyA, uncertaintyB 
 
 
+
     # Calculate and plot the QQ-plot (or Quantile-Quantile plot) and the histogram of a given list of input values.
     @staticmethod
     def QQPlot (xInput, xlabelToPrint = 'input values', ylabelToPrint = 'z (sigma)',
@@ -201,10 +228,27 @@ class DataTools:
                 HistTitleToPrint = 'DataTools version ' + DataToolsVersion + ': Histogram of input data', 
                 plotTextAverageMedian = True):
         '''
-        
-        
+        :param xInput: the list of data points.
+        :type xInput: list [float]
+
+        :param xlabelToPrint: the x-label to print on the QQ-plot.
+        :type xlabelToPrint: str
+
+        :param ylabelToPrint: the x-label to print on the QQ-plot.
+        :type ylabelToPrint: str
+
+        :param QQTitleToPrint: the title to print on the QQ-plot.
+        :type QQTitleToPrint: str
+
+        :param HistTitleToPrint: the title to print on the histogram.
+        :type HistTitleToPrint: str
+
+        :param plotTextAverageMedian: if True then plot the values of the average, median and standar deviation in the plot.
+        :type plotTextAverageMedian: bool
+
+                
         **Description:**
-        Calculate and plot the QQ-plot (or Quantile-Quantile plot) and the histogram of a given list of input values.
+        Calculate and plot the QQ-plot (or Quantile-Quantile plot), as well as the histogram, of a given list of data values.
         '''
 
         xInput = np.array (xInput)
@@ -319,27 +363,34 @@ class DataTools:
     @staticmethod
     def getCumulativeNormalDistribution (mu,sigma):
         '''
+        :param mu: the average values of the data values.
+        :type mu: list [float]
+
+        :param sigma: the standard deviation of the data values.
+        :type sigma: float.
+        
+        :return: x and 
+        :rtype: list [float], list [float]
         
         
         **Description:**
-        Calculate the gaussian normal cumulative distribution curve N(mu,sigma) between -5*sigma and +5*sigma at stepsize 0.05*sigma.
-
-        (Used by the QQPlot function)
+        Calculate the gaussian normal cumulative distribution curve N(mu,sigma) between -5 x sigma and +5 x sigma at stepsize 0.05 x sigma.
+        The results of the :py:meth:`~.getNormalDistribution` function call is used. 
+        This function is called from the :py:meth:`~.QQPlot` function.
         '''
 
         x, normalDistribution = DataTools.getNormalDistribution (mu, sigma)
 
         cumulativeNormalDistribution = []
 
-        cumulativeNormalDistribution.append (normalDistribution [0])
+        cumulativeNormalDistribution.append ( normalDistribution [0] )
 
-        for i in range (1,len (x)-1):
+        for i in range ( 1, len (x) - 1 ):
 
-            cumulativeNormalDistribution.append ( cumulativeNormalDistribution [-1] + \
-                                                  (x [i]-x [i-1]) * ( normalDistribution [i] + normalDistribution [i-1]) / 2 \
-                                                )
+            cumulativeNormalDistribution.append ( cumulativeNormalDistribution [-1] + 
+                                                  ( x [i]- x [i-1] ) * ( normalDistribution [i] + normalDistribution [i-1] ) / 2 )
 
-        cumulativeNormalDistribution.append (cumulativeNormalDistribution [-1])
+        cumulativeNormalDistribution.append ( cumulativeNormalDistribution [-1] )
 
         return x, cumulativeNormalDistribution
 
@@ -349,19 +400,25 @@ class DataTools:
     @staticmethod
     def getNormalDistribution (mu,sigma):
         '''
-        
-        
+        :param mu: the average values of the data values.
+        :type mu: float
+
+        :param sigma: the standard deviation of the data values.
+        :type sigma: float
+ 
+        :return: the equally separated x values along the gaussian distribution and the corresponding values of a pure normal distribution.
+        :rtype: list [float], list [float]
+               
         **Description:**
-        Calculate the gaussian normal distribution curve N(mu,sigma) between -5*sigma and +5*sigma at stepsize 0.05*sigma.
-        
-        (Used by the getCumulativeNormalDistribution function).
+        Calculate the gaussian normal distribution curve N (mu,sigma) between -5 x sigma and +5 x sigma at stepsize 0.05 x sigma.
+        This function calls the :py:meth:`~.getNormalDistributionValue` function and it is called by the :py:meth:`~.getCumulativeNormalDistribution` function.
         '''
 
-        cnst = 1 / (sigma * np.sqrt (2 * np.pi))
+        constant = 1 / (sigma * np.sqrt (2 * np.pi))
 
         x = [ (mu + i*sigma / 20) for i in range (-100, 101) ]
 
-        normalDistribution = [cnst * DataTools.getNormalDistributionValue (x [i], mu, sigma)  for i in range (len (x))]
+        normalDistribution = [ constant * DataTools.getNormalDistributionValue (x [i], mu, sigma)  for i in range ( len (x) ) ]
 
         return x, normalDistribution
 
@@ -371,12 +428,22 @@ class DataTools:
     @staticmethod
     def getNormalDistributionValue (xi,mu,sigma):
         '''
+        :param xi: the x-value to calculate the normal distribution value for.
+        :type xi: float
+
+        :param mu: the average values of the data values.
+        :type mu: float
+
+        :param sigma: the standard deviation of the data values.
+        :type sigma: float
+ 
+        :return: the normal distribution value for the point x-i in the normal distribution with average mu and standard deviation sigma.
+        :rtype: float
         
         
         **Description:**
-        The value of the gaussian normal distribution defined by N(mu, sigma) at xi.
-        
-        (Used by the getNormalDistribution function).
+        The value of the gaussian normal distribution defined by N (mu, sigma) at xi.
+        This function is called by the :py:meth:`~.getNormalDistribution` function.
         '''
 
         normalValue = np.exp ( -0.5 * (xi - mu) * (xi - mu) / sigma / sigma )
@@ -389,8 +456,18 @@ class DataTools:
     @staticmethod
     def getAverageVarAndSDPYtoCPP (dataValues = [], removeNaN = False):
         '''
+        :param dataValues: list of data values.
+        :type dataValues: list [float] or NumPy array (one dimension)
+
+        :param removeNaN: if True then remove any NaN values from the list of data values.
+        :type removeNaN: bool
+        
+        :return: average, standard deviation and variance of the list of data values.
+        :rtype: float, float, float.
         
         **Description:**
+        Calculate the average, standard deviation and variance of the list of data values using C++ code.   
+        If :code:`removeNaN = True`, then call the :py:meth:`~.getNanFreeNumpyArray` function to remove any NaN values from the data list.     
         '''
 
         if removeNaN:
@@ -412,8 +489,24 @@ class DataTools:
     @staticmethod
     def getMedianAndQuantilesPYtoCPP (dataValues = [], lowerQuantilePercentage = 25, upperQuantilePercentage = 75, removeNaN = False):
         '''
+        :param dataValues: list of data values.
+        :type dataValues: list [float] or NumPy array (one dimension)
+
+        :param lowerQuantilePercentage: the lower quantile.
+        :type lowerQuantilePercentage: float
+
+        :param upperQuantilePercentage: the upper quantile.
+        :type upperQuantilePercentage: float
+
+        :param removeNaN: if True then remove any NaN values from the list of data values.
+        :type removeNaN: bool
+        
+        :return: average, standard deviation and variance of the list of data values.
+        :rtype: float, float, float.
         
         **Description:**
+        Calculate the median, lower and upper quantiles of the list of data values using C++ code.   
+        If :code:`removeNaN = True`, then call the :py:meth:`~.getNanFreeNumpyArray` function to remove any NaN values from the data list.     
         '''
 
         if removeNaN:
@@ -436,8 +529,14 @@ class DataTools:
     @staticmethod
     def getNanFreeNumpyArray (dataValues):
         '''
+        :param dataValues: complete list of data values.
+        :type dataValues: list [float] or NumPy array (one dimension)
+        
+        :return: list of data values with any NaN values removed.
+        :rtype: NumPy array 
         
         **Description:**
+        Remove all the NaN values from a list of data values and return the cleansed list as a NumPy array (one dimension).
         '''
         
         if type (dataValues) == list:
