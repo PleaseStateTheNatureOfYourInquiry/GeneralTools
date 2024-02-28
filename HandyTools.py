@@ -286,6 +286,75 @@ class HandyTools:
             return []
         
             
+
+    # Reads data from a text file and return a list of NumPy arrays.
+    @staticmethod
+    def readTable (textFileNameAndPath):
+        '''
+        :param textFileNameAndPath: file name (and path) of the text file to read.
+        :type textFileNameAndPath: str
+
+        :return: content transformed to numbers (int or float)
+        :rtype: list of NumPy arrays, one for each column in the list.
+
+        **Description:**
+        Reads data from a text file and return a list of NumPy arrays, one for each column in the text file! 
+        Calls ``HandyTools.getTextFileContent`` to load the content of the text file.
+        '''
+        
+        tableContentData = []
+        tableContent = HandyTools.getTextFileContent (textFileNameAndPath, stripLineFromBlanks = True)
+
+        if tableContent:
+        
+            if "C_END\n" in tableContent:
+            
+                iC_END = tableContent.index ("C_END\n")
+            
+            
+            elif "C_END" in tableContent:
+            
+                iC_END = tableContent.index ("C_END")
+            
+            
+            #---------- If file has no "C_END" marker, then assume the data start at the top.
+            else:
+
+                print ('')
+                print ('---ATTENTION---')
+                print (' From HandyTools.readTable: ')
+                print('   File {} does not contain "C_END" marker: assuming data only'.format (textFileNameAndPath) )
+                print('')
+                
+                iC_END = -1
+                
+            
+            numberOfLines = len (tableContent) 
+            numberOfDataLines = numberOfLines - iC_END - 1
+                       
+            if numberOfDataLines:
+                       
+                numberOfEntriesPerLine = len ( tableContent [iC_END + 1].split () )
+                
+                tableContentData = [ []  for iLine in range (numberOfEntriesPerLine) ]
+                       
+                for iTableContent in range (iC_END + 1, numberOfLines):
+                
+                    for iDataValueString, dataValuesString in enumerate ( tableContent [iTableContent].split () ):
+    
+                        if '.' in dataValuesString:
+                        
+                            tableContentData [iDataValueString].append ( float (dataValuesString) ) 
+                            
+                        else:
+                        
+                            tableContentData [iDataValueString].append ( int (dataValuesString) )
+            
+            tableContentData =  [ np.asarray (tableContentData [iColumn], dtype = type (tableContentData [iColumn][0]) )  for iColumn in range (numberOfEntriesPerLine) ]                                                
+            
+        return tableContentData
+                
+
                    
     # Save content (list, dictionary, ...) to a numpy file with a custom extension.
     @staticmethod
