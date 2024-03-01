@@ -295,11 +295,15 @@ class HandyTools:
         :type textFileNameAndPath: str
 
         :return: content transformed to numbers (int or float)
-        :rtype: list of NumPy arrays, one for each column in the list.
+        :rtype: list [1-D NumPy array], one for each column in the list.
 
         **Description:**
-        Reads data from a text file and return a list of NumPy arrays, one for each column in the text file! 
-        Calls ``HandyTools.getTextFileContent`` to load the content of the text file.
+        Using this function formatted human-readable data from a text file can be loaded as a list of 1-Dimensional NumPy arrays.
+        Each NumPy array in the list contains the content of one of the columns of the data in the file. 
+        In this manner, integers and floats can be separated. 
+        This function calls the ``HandyTools.getTextFileContent`` method to load the full content of the text file.
+        The presence of the string ``C_END`` marks the end of any header and the start of the data columns.
+        If there is no ``C_END`` marker, then it is assumed the files contains only data columns.
         '''
         
         tableContentData = []
@@ -351,6 +355,20 @@ class HandyTools:
                             tableContentData [iDataValueString].append ( int (dataValuesString) )
             
             tableContentData =  [ np.asarray (tableContentData [iColumn], dtype = type (tableContentData [iColumn][0]) )  for iColumn in range (numberOfEntriesPerLine) ]                                                
+            
+            print ('')
+            print ('-------------')
+            print (' From HandyTools.readTable: ')
+            print ( '  file {} has been loaded with'.format (textFileNameAndPath) )
+            print ( '  {} data lines and {} columns'.format (numberOfDataLines, numberOfEntriesPerLine) )                
+
+            
+        else:
+        
+            print ('')
+            print ('---WARNING---')
+            print (' From HandyTools.readTable: ')
+            print ( '  file {} does not contain any readable data.'.format (textFileNameAndPath) )                
             
         return tableContentData
                 
