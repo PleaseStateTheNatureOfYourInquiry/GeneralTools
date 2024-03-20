@@ -144,7 +144,7 @@ class DataTools:
                 print (' Window width needs to be uneven number: reset to {} samples.'.format (windowWidth) )
     
                 
-            return FilterToolsPYtoCPP.passAverageFilterPYtoCPP (dataValues, windowWidth // 2 - 1)
+            return FilterToolsPYtoCPP.passAverageFilterPYtoCPP (dataValues, windowWidth // 2)
         
 
 
