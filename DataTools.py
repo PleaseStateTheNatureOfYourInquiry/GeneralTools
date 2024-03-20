@@ -1,7 +1,7 @@
 # DataTools: a Python pseudo-class
 # Author = Maarten Roos
 
-DataToolsVersion = '20240212'
+DataToolsVersion = '20240320'
 
 # Standard imports.
 import os
@@ -107,32 +107,87 @@ class DataTools:
 
     #
     @staticmethod
-    def passAverageFilter (dataValues, widthOfWindow):
+    def passAverageFilter (dataValues, windowWidth):
         '''
         :param dataValues: list (one dimension) of data values that represent the signal to be filtered.
         :type dataValues: list 
 
-        :param widthOfWindow: half the width of the window: number of values to the left and to the right of the central value. Total number of point in the window is :code:`2 * widthOfWindow + 1`.
-        :type widthOfWindow: int
+        :param windowWidth: width of the window: number of values in the averaging window including the central value. This is always an uneven number.
+        :type windowWidth: int
 
         :return: signal ``dataValues`` filtered with a running average. 
         :rtype: list 
 
 
         **Description:**
-        Use this function to perform a running average filtering of a list (one dimension) of data values. The total number of point in the averaging window is :code:`2 * widthOfWindow + 1`. At the beginning and the end of the list, filtering is done with the available data values. For example, the result for the first data value is the average of the first data value and the :code:`width` data values to the right. 
+        Use this function to perform a running average filtering of a list (one dimension) of data values. The total number of point in the averaging window is :code:`2 * windowWidth + 1`. At the beginning and the end of the list, filtering is done with the available data values. For example, the result for the first data value is the average of the first data value and the :code:`width` data values to the right. 
         
         The noise level of the filtered set can be easily calculated from the noise level of the original data values, by dividing by the square root of the total number of data values in the averaging window. 
         '''
+
+        if windowWidth <= 0:
+
+            print ()
+            print ('---WARNING---')
+            print (' Window width needs to be an uneven number larger than 0!')
+        
+            return dataValues
+        
+        else:
+              
+            if not windowWidth % 2:
+            
+                windowWidth += 1
+                
+                print ()
+                print ('---WARNING---')
+                print (' Window width needs to be uneven number: reset to {} samples.'.format (windowWidth) )
+    
+                
+            return FilterToolsPYtoCPP.passAverageFilterPYtoCPP (dataValues, windowWidth // 2 - 1)
         
 
-        return FilterToolsPYtoCPP.passAverageFilterPYtoCPP (dataValues, widthOfWindow)
-        
-       
 
-    # Pass a given input signal through a notch filter.
+    # Pass a given input signal through a median filter.
     @staticmethod
-    def getNotchFilteredSignal (inputSignal, samplingFrequency = 1000, notchFrequency = 50, qualityFactor = 20):
+    def passMedianFilter (dataValues, windowWidth = 3):
+        '''
+        :param dataValues: list (one dimension) of data values that represent the signal to be filtered.
+        :type dataValues: list 
+
+        :param windowWidth: width of the window: number of values in the averaging window including the central value. This is always an uneven number.
+        :type windowWidth: int
+
+        **Description:**
+        Pass a given input signal through a median filter, using signal.medfilt method.
+        '''
+
+        if windowWidth <= 0:
+
+            print ()
+            print ('---WARNING---')
+            print (' Window width needs to be an uneven number larger than 0!')
+        
+            return (dataValues)
+        
+        else:
+               
+            if not windowWidth % 2:
+            
+                windowWidth += 1
+                
+                print ()
+                print ('---WARNING---')
+                print (' Window width needs to be uneven number: reset to {} samples.'.format (windowWidth) )
+
+    
+            return signal.medfilt (dataValues, windowWidth)         
+
+           
+
+    # Pass a given input signal through a Butterworth notch filter.
+    @staticmethod
+    def passButterworthNotchFilter (inputSignal, samplingFrequency = 1000, notchFrequency = 50, qualityFactor = 2):
         '''
         :param inputSignal: list (one dimension) of data values that represent the signal to be filtered.
         :type inputSignal: list 
@@ -151,7 +206,7 @@ class DataTools:
         
         
         **Description:**
-        Pass a given input signal through a notch filter, using the signal.iirnotch, signal.freqz and the signal.filtfilt (back and forth filtering) methods.
+        Pass a given input signal through a notch filter, using the signal.iirnotch and signal.freqz methods.
         '''
          
         # Design a notch filter using the signal.iirnotch method (Infinite Impulse Response)
@@ -165,7 +220,7 @@ class DataTools:
         return outputSignal, filterFrequency, amplitudedB
 
 
-
+    
     # Determine the values of the variables a and b for the linear least square solution y  =  a * x  +  b.
     @staticmethod
     def linearLeastSquare (xInput, yInput):
