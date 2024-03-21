@@ -1,7 +1,7 @@
 # DataTools: a Python pseudo-class
 # Author = Maarten Roos
 
-DataToolsVersion = '20240320'
+DataToolsVersion = '20240321'
 
 # Standard imports.
 import os
@@ -187,10 +187,26 @@ class DataTools:
 
     # Pass a given input signal through a Butterworth notch filter.
     @staticmethod
-    def passButterworthNotchFilter (inputSignal, samplingFrequency = 1000, notchFrequency = 50, qualityFactor = 2):
+    def passButterworthNotchFilter ( inputSignal = [], 
+                                     bNotch = [],
+                                     aNotch = [], 
+                                     applyFilter = True,
+                                     samplingFrequency = 1000, 
+                                     notchFrequency = 50, 
+                                     qualityFactor = 2, 
+                                     getFilterSettings = True ):
         '''
         :param inputSignal: list (one dimension) of data values that represent the signal to be filtered.
         :type inputSignal: list 
+
+        :param bNotch: 
+        :type bNotch: float
+
+        :param aNotch: 
+        :type aNotch: float
+
+        :param applyFilter: True if the filter needs to be applied to the signal.
+        :type applyFilter: bool
 
         :param samplingFrequency: 
         :type samplingFrequency: float
@@ -201,26 +217,131 @@ class DataTools:
         :param qualityFactor: 
         :type qualityFactor: float
 
+        :param getFilterSettings: True if the filter settings need to be calculated.
+        :type getFilterSettings: bool
+
+        :return: If getFilterSettings = True and applyFilter = True, then return outputSignal, bNotch, aNotch, filterFrequency, amplitudedB. If getFilterSettings = True and applyFilter = False, then return bNotch, aNotch, filterFrequency, amplitudedB. If getFilterSettings = False and applyFilter = True, then return outputSignal:
+        :rtype: list, NumPy array, NumPy array, NumPy array, NumPy array
+        
+        
+        **Description:**
+        Pass a given input signal through a notch filter. Use the signal.iirnotch method to calculate the filter parameters *bNotch* and *aNotch*, 
+        and the signal.filtfilt method to apply the filter.
+        '''
+
+        
+        # Calculate the bNotch and aNotch parameters of the filter.
+        if getFilterSettings:
+             
+            # Design a notch filter using the signal.iirnotch method (Infinite Impulse Response)
+            bNotch, aNotch = signal.iirnotch (notchFrequency, qualityFactor, samplingFrequency)
+     
+            # Compute magnitude response of the designed filter
+            filterFrequency, amplitudedB = signal.freqz (bNotch, aNotch, fs = samplingFrequency)
+        
+
+        # Apply the filter to the input signal.
+        if applyFilter and len (bNotch) and len (aNotch):
+        
+            outputSignal = signal.filtfilt (bNotch, aNotch, inputSignal)
+
+
+        # If no valid filter parameters were given, then issue a warning.
+        elif applyFilter and ( not len (bNotch) or not len (aNotch) ):
+        
+            print ()
+            print ('---WARNING---')
+            print (' Filter settings bNotch and/or aNotch have not been given or calculated.')
+            
+            return []
+
+        
+        # Return the correct variables.
+        if getFilterSettings and applyFilter:        
+
+            return outputSignal, bNotch, aNotch, filterFrequency, amplitudedB
+            
+        elif getFilterSettings and not applyFilter:
+        
+            return bNotch, aNotch, filterFrequency, amplitudedB
+            
+        elif not getFilterSettings and applyFilter:
+        
+            return outputSignal
+
+
+
+    # Pass a given input signal through a Butterworth notch filter.
+    @staticmethod
+    def passButterworthBandPassFilter ( inputSignal = [], 
+                                        secondfilterOrderSections = [],
+                                        applyFilter = True,
+                                        samplingFrequency = 1000, 
+                                        filterType = 'lowpass', 
+                                        filterOrder = 10,
+                                        cutoffFrequency = 10,
+                                        getFilterSettings = True ):
+    
+    
+        '''
+        :param inputSignal: list (one dimension) of data values that represent the signal to be filtered.
+        :type inputSignal: list 
+
+        :param samplingFrequency: 
+        :type samplingFrequency: float
+
+        :param filterType: 
+        :type filterType: int
+
+        :param qualityFactor: 
+        :type qualityFactor: float
+
         :return: outputSignal, filterFrequency, amplitudedB
         :rtype: list, float, float
         
         
         **Description:**
-        Pass a given input signal through a notch filter, using the signal.iirnotch and signal.freqz methods.
+        Pass a given input signal through a notch filter, using the signal.butter and signal.sosfilt methods.
         '''
          
-        # Design a notch filter using the signal.iirnotch method (Infinite Impulse Response)
-        bNotch, aNotch = signal.iirnotch (notchFrequency, qualityFactor, samplingFrequency)
- 
-        # Compute magnitude response of the designed filter
-        filterFrequency, amplitudedB = signal.freqz (bNotch, aNotch, fs = 2 * np.pi)
+        # Calculate the bNotch and aNotch parameters of the filter.
+        if getFilterSettings:
+             
+            # Design a notch filter using the signal.iirnotch method (Infinite Impulse Response)
+            secondfilterOrderSections = signal.butter (filterOrder, cutoffFrequency, btype = filterType, fs = samplingFrequency, output = 'sos')
+     
         
-        outputSignal = signal.filtfilt (bNotch, aNotch, inputSignal)
+        # Apply the filter to the input signal.
+        if applyFilter and len (secondfilterOrderSections):
+        
+            outputSignal = signal.sosfiltfilt (secondfilterOrderSections, inputSignal)
 
-        return outputSignal, filterFrequency, amplitudedB
 
+        # If no valid filter parameters were given, then issue a warning.
+        elif applyFilter and ( not len (secondfilterOrderSections) ):
+        
+            print ()
+            print ('---WARNING---')
+            print (' Filter settings secondfilterOrderSections have not been given or calculated.')
+            
+            return []
+
+        
+        # Return the correct variables.
+        if getFilterSettings and applyFilter:        
+
+            return outputSignal, secondfilterOrderSections
+            
+        elif getFilterSettings and not applyFilter:
+        
+            return secondfilterOrderSections
+            
+        elif not getFilterSettings and applyFilter:
+        
+            return outputSignal
 
     
+
     # Determine the values of the variables a and b for the linear least square solution y  =  a * x  +  b.
     @staticmethod
     def linearLeastSquare (xInput, yInput):
@@ -313,10 +434,10 @@ class DataTools:
 
         x, cumulativeNormalDistribution = DataTools.getCumulativeNormalDistribution (xInputMean, xInputStd)
 
-        xInputOrdered = xInput.copy ()
-        xInputOrdered.sort ()
+        xInputfilterOrdered = xInput.copy ()
+        xInputfilterOrdered.sort ()
 
-        xInputCumulativeNormalDistribution = [ (i-1) / len (xInputOrdered) for i in range (1,len (xInputOrdered)+1) ]
+        xInputCumulativeNormalDistribution = [ (i-1) / len (xInputfilterOrdered) for i in range (1,len (xInputfilterOrdered)+1) ]
 
         xValues = []
 
@@ -354,7 +475,7 @@ class DataTools:
         phiValues = np.array (zValues) * xInputStd + xInputMean
         phiValuesStandard = (phiValues - xInputMean) / xInputStd
 
-        zValuesxInputOrdered = (np.array (xInputOrdered) - xInputMean) / xInputStd
+        zValuesxInputfilterOrdered = (np.array (xInputfilterOrdered) - xInputMean) / xInputStd
 
         # Plot the QQ-plot in figure 1 and the histogram in figure 2
         plt.figure (1)
@@ -363,7 +484,7 @@ class DataTools:
         labelMeanToPrint = 'mean, median = {:g}, {:g}'.format (xInputMean, xInputMedian)
         labelSTDToPrint = 'sd = {:g}'.format (xInputStd)
 
-        plt.scatter (zValuesxInputOrdered, zValues, s=1, color = 'green')
+        plt.scatter (zValuesxInputfilterOrdered, zValues, s=1, color = 'green')
         plt.xlim (-3,3)
         # Plot the vertical 1-sigma reference lines
         plt.plot ([-1,-1], [-3,3], color = 'green', linewidth = 0.5)
