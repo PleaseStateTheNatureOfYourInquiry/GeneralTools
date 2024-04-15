@@ -1,6 +1,6 @@
 
 # Qt imports.
-from PyQt6.QtWidgets import QMessageBox
+from PyQt6.QtWidgets import QMessageBox, QLabel
 
 
 # A handy general class to create an information dialog window for PyQt6.
@@ -32,7 +32,7 @@ class informationDialog ():
         self.informationDialogBox.setWindowTitle (windowTitle)
         
         self.informationDialogBox.setText (messageText)
-
+        
         if informationType == 'warning':
         
             self.informationDialogBox.setIcon (QMessageBox.Icon.Warning)
