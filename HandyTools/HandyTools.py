@@ -260,11 +260,11 @@ class HandyTools:
                 for fileLine in fileContent:
                                 
                     fileContentClean.append ( fileLine [:-1] if fileLine [-1] == '\n'  else  fileLine )
-
-                    if stripLineFromBlanks:
                     
-                        fileContentClean [-1].strip ()
-
+                    if stripLineFromBlanks:
+                                        
+                        fileContentClean [-1] = fileContentClean [-1].strip ()
+                        
         
                 return fileContentClean
                 
@@ -287,38 +287,72 @@ class HandyTools:
         
             
 
-    # Reads data from a text file and return a list of NumPy arrays.
+    # Reads data from a tabular text file and return a list of NumPy arrays, strings and the header.
     @staticmethod
-    def readTable (textFileNameAndPath):
+    def readTable (textFileNameAndPath, endOfHeaderString = 'C_END', separatorString = ' '):
         '''
-        :param textFileNameAndPath: file name (and path) of the text file to read.
+        :param textFileNameAndPath: file name (and path) of the table (text) file to read.
         :type textFileNameAndPath: str
 
-        :return: content transformed to numbers (int or float)
-        :rtype: list [1-D NumPy array], one for each column in the list.
+        :param endOfHeaderString: string at the end of the header and the start of the tabular data, default = *C_END*
+        :type endOfHeaderString: str
+
+        :param separatorString: string that separates the elements in the table at each row, default is one empty space.
+        :type separatorString: str
+
+        :return: table content for each column as numbers (int or float, or NaN), as strings, and the content of a header.
+        :rtype: list [ list [1-D NumPy array] ], one for each column in the list, list [ list [str] ], list [str]
 
         **Description:**
-        Using this function formatted human-readable data from a text file can be loaded as a list of 1-Dimensional NumPy arrays.
-        Each NumPy array in the list contains the content of one of the columns of the data in the file. 
-        In this manner, integers and floats can be separated. 
-        This function calls the ``HandyTools.getTextFileContent`` method to load the full content of the text file.
-        The presence of the string ``C_END`` marks the end of any header and the start of the data columns.
-        If there is no ``C_END`` marker, then it is assumed the files contains only data columns.
+        With this method formatted human-readable tabular data from a text file can be loaded as a list of 1-Dimensional NumPy arrays.
+
+        If the table file has header text, then the user can indicate the ``endOfHeaderString`` that signals the end of the header and the start of the data,
+        in the example below ``C_END``, which is also the default value.
+        
+        .. code-block:: console
+        
+            header line 1
+            header line 2
+            
+            C_END
+            entry1 1 4.5 6
+            entry2 2 5.3 7
+            
+        
+        Alternatively there can be no header and just data. 
+        
+        .. code-block:: console
+
+            entry1 1 4.5 6
+            entry2 2 5.3 7
+        
+        
+        .. note:: 
+        
+            It is assumed there are no empty row amongst the data rows!
+
+                 
+        The tabular data is returned both as an array of NumPy arrays and as a list of strings. 
+        Each array (list) in the list contains the content of one of the columns from the table.
+        Note that the format of the data (int or float) can be different per column and is taken to be the format of the data entrees in the first row.
+        In this manner integers and floats can be mixed as long as they are consistent throughout each column. 
+        In the example above, the 2nd and  4th columns are int and the 3rd column a float. The first column is not numerical and is returned as a list of NaN.
+        
+        The ``HandyTools.getTextFileContent`` method is used to load the full content of the text file.
         '''
         
-        tableContentData = []
         tableContent = HandyTools.getTextFileContent (textFileNameAndPath, stripLineFromBlanks = True)
 
         if tableContent:
         
-            if "C_END\n" in tableContent:
+            if (endOfHeaderString + "\n").strip () in tableContent:
             
-                iC_END = tableContent.index ("C_END\n")
+                iHeaderEnd = tableContent.index ( (endOfHeaderString + "\n").strip () )
             
             
-            elif "C_END" in tableContent:
+            elif endOfHeaderString.strip () in tableContent:
             
-                iC_END = tableContent.index ("C_END")
+                iHeaderEnd = tableContent.index ( endOfHeaderString.strip () )
             
             
             #---------- If file has no "C_END" marker, then assume the data start at the top.
@@ -327,34 +361,53 @@ class HandyTools:
                 print ('')
                 print ('---ATTENTION---')
                 print (' From HandyTools.readTable: ')
-                print('   File {} does not contain "C_END" marker: assuming data only'.format (textFileNameAndPath) )
+                print('   File {} does not contain {} marker: assuming data only'.format ( textFileNameAndPath, endOfHeaderString.strip () ) )
                 print('')
                 
-                iC_END = -1
-                
+                iHeaderEnd = -1
+
+
+            # Store each line of the header in the  tableContentHeader  string list.
+            #  Do not store empty lines.
+            tableContentHeader = []
+            if iHeaderEnd >= 0:
             
+                tableContentHeader = [ headerLine.strip ()  for headerLine in tableContent [0:iHeaderEnd]  if headerLine.strip () ]
+
+            
+            # Go through each data line and extract each element of the line as a string and if possible as a number.
             numberOfLines = len (tableContent) 
-            numberOfDataLines = numberOfLines - iC_END - 1
-                       
+            numberOfDataLines = numberOfLines - iHeaderEnd - 1                                   
             if numberOfDataLines:
-                       
-                numberOfEntriesPerLine = len ( tableContent [iC_END + 1].split () )
+
+                numberOfEntriesPerLine = len ( tableContent [iHeaderEnd + 1].split (separatorString) )
                 
-                tableContentData = [ []  for iLine in range (numberOfEntriesPerLine) ]
+                tableContentDataNumbers = [ []  for iLine in range (numberOfEntriesPerLine) ]
+                tableContentDataStrings = [ []  for iLine in range (numberOfEntriesPerLine) ]
                        
-                for iTableContent in range (iC_END + 1, numberOfLines):
+                # Go through each element on the line: elements are based on the  separatorString
+                for iTableContent in range (iHeaderEnd + 1, numberOfLines):
                 
-                    for iDataValueString, dataValuesString in enumerate ( tableContent [iTableContent].split () ):
-    
-                        if '.' in dataValuesString:
-                        
-                            tableContentData [iDataValueString].append ( float (dataValuesString) ) 
+                    for iDataValueString, dataValuesString in enumerate ( tableContent [iTableContent].split (separatorString) ):
+
+                        tableContentDataStrings [iDataValueString].append ( dataValuesString.strip () )  
+
+                        try:
                             
-                        else:
+                            if '.' in dataValuesString:
+                            
+                                tableContentDataNumbers [iDataValueString].append ( float (dataValuesString) ) 
+                                
+                            else:
+                            
+                                tableContentDataNumbers [iDataValueString].append ( int (dataValuesString) )
+
+                        except:
                         
-                            tableContentData [iDataValueString].append ( int (dataValuesString) )
+                            tableContentDataNumbers [iDataValueString].append (np.nan)
+
             
-            tableContentData =  [ np.asarray (tableContentData [iColumn], dtype = type (tableContentData [iColumn][0]) )  for iColumn in range (numberOfEntriesPerLine) ]                                                
+            tableContentDataNumbers =  [ np.asarray (tableContentDataNumbers [iColumn], dtype = type (tableContentDataNumbers [iColumn][0]) )  for iColumn in range (numberOfEntriesPerLine) ]                                                
             
             print ('')
             print ('-------------')
@@ -369,8 +422,9 @@ class HandyTools:
             print ('---WARNING---')
             print (' From HandyTools.readTable: ')
             print ( '  file {} does not contain any readable data.'.format (textFileNameAndPath) )                
+
             
-        return tableContentData
+        return tableContentDataNumbers, tableContentDataStrings, tableContentHeader
                 
 
                    
@@ -433,11 +487,11 @@ class HandyTools:
     @staticmethod
     def getDateAndTime ():
         '''
-        :return: dateandtime.dataandtime object.
-        :rtype: dateandtime.dataandtimeobject
+        :return: datetime object.
+        :rtype: datetime object.
 
         **Description:**
-        Obtain the date and time of the moment of the call of this function. The result is returned as a dataandtime.dateandtime object.
+        Obtain the date and time of the moment of the call of this function. The result is returned as a datetime object.
         This object has several attributes, for example *year*, *month*, *day*, *hour*, *minute* and *second*. Use ``dir`` for a full list of all attributes.
         The ``dataandtime`` module is used in this function.
         '''
