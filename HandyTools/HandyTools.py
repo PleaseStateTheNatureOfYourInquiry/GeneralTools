@@ -1,7 +1,7 @@
 # HandyTools: a Python pseudo-class
 # Author = Maarten Roos
 
-currentVersionHandyTools = '20240205'
+currentVersionHandyTools = '20240501'
 
 # Standard imports.
 import os
@@ -19,22 +19,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from scipy import signal
-
-
-# Custom imports
-try:
-
-    from archiveToolConfiguration import *
-    EMCSystem = True
-
-except:
-
-    EMCSystem = False
-
-
-
-from DataTools import DataTools
-
 
 
 
@@ -129,22 +113,6 @@ class HandyTools:
                 for iDelete in iDeleteFromList:
                 
                     listOfFileNames.pop (iDelete)
-
-        
-        # If on the EMC system, then make sure that the absolute paths are all starting with the standardRootPath = '\\\\department-m.erasmusmc.nl\\card\\Data'
-        if EMCSystem:
-        
-            for iFileName in range ( len (listOfFileNames) ):
-            
-                if 'V:' in listOfFileNames [iFileName]:
-                
-                    listOfFileNames [iFileName] = listOfFileNames [iFileName].replace ('V:', '\\\\department-m.erasmusmc.nl\\card\\Data')
-
-
-                if '\\\\storage.erasmusmc.nl\\v\\vcl09\\CARD\\Data' in listOfFileNames [iFileName]:
-                
-                    listOfFileNames [iFileName] = listOfFileNames [iFileName].replace ('\\\\storage.erasmusmc.nl\\v\\vcl09\\CARD\\Data', '\\\\department-m.erasmusmc.nl\\card\\Data')
-                    
 
 
         return listOfFileNames
@@ -327,7 +295,7 @@ class HandyTools:
             entry2 2 5.3 7
         
         
-        .. note:: 
+        .. attention:: 
         
             It is assumed there are no empty row amongst the data rows!
 
