@@ -271,16 +271,16 @@ class DataTools:
 
 
 
-    # Pass a given input signal through a Butterworth notch filter.
+    # Pass a given input signal through a Butterworth Band Pass or Band Stop filter.
     @staticmethod
-    def passButterworthBandPassFilter ( inputSignal = [], 
-                                        secondfilterOrderSections = [],
-                                        applyFilter = True,
-                                        samplingFrequency = 1000, 
-                                        filterType = 'lowpass', 
-                                        filterOrder = 10,
-                                        cutoffFrequency = 10,
-                                        getFilterSettings = True ):
+    def passButterworthBandPassOrStopFilter ( inputSignal = [],
+                                              secondfilterOrderSections = [],
+                                              applyFilter = True,
+                                              samplingFrequency = 1000, 
+                                              filterType = 'lowpass', 
+                                              filterOrder = 10,
+                                              cutoffFrequency = 10,
+                                              getFilterSettings = True ):
     
     
         '''
@@ -304,15 +304,20 @@ class DataTools:
         
         
         **Description:**
-        Pass a given input signal through a notch filter, using the signal.butter and signal.sosfilt methods. It is recommended to use SOS, or Second-Order Sections
+        Pass a given input signal through a Butterworth band pass or stop filter, using the signal.butter and signal.sosfilt methods. 
+        It is recommended to use *SOS*, or *Second-Order Sections*
         (see `scipy.signal.butter description <https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.butter.html>`_).
         '''
          
         # Calculate the filter parameters.
         if getFilterSettings:
+
+            # For Band Stop filtering, the  cutoffFrequency  has to be a list of two numbers, the low and the high end of the band stop.
+            # For Band Pass filtering, the  cutoffFrequency  has to be a number, not a list.
+            if (filterType == 'bandstop' and type (cutoffFrequency) == list) or (filterType != 'bandstop' and type (cutoffFrequency) != list):
              
-            # Design the filter using the signal.butter method (Second Order Sequence).
-            secondfilterOrderSections = signal.butter (filterOrder, cutoffFrequency, btype = filterType, fs = samplingFrequency, output = 'sos')
+                # Design the filter using the signal.butter method (Second Order Sequence).
+                secondfilterOrderSections = signal.butter (filterOrder, cutoffFrequency, btype = filterType, fs = samplingFrequency, output = 'sos')
 
      
         
