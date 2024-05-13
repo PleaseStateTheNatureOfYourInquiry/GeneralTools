@@ -1,7 +1,7 @@
 # DataTools: a Python pseudo-class
 # Author = Maarten Roos
 
-DataToolsVersion = '20240321'
+DataToolsVersion = '20240513'
 
 # Standard imports.
 import os
@@ -286,7 +286,10 @@ class DataTools:
         '''
         :param inputSignal: list (one dimension) of data values that represent the signal to be filtered.
         :type inputSignal: list 
-
+        
+        :param secondfilterOrderSections: SOS or Second-Order Sections.
+        :type secondfilterOrderSections:
+        
         :param samplingFrequency: 
         :type samplingFrequency: float
 
@@ -301,14 +304,16 @@ class DataTools:
         
         
         **Description:**
-        Pass a given input signal through a notch filter, using the signal.butter and signal.sosfilt methods.
+        Pass a given input signal through a notch filter, using the signal.butter and signal.sosfilt methods. It is recommended to use SOS, or Second-Order Sections
+        (see `scipy.signal.butter description <https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.butter.html>`_).
         '''
          
-        # Calculate the bNotch and aNotch parameters of the filter.
+        # Calculate the filter parameters.
         if getFilterSettings:
              
-            # Design a notch filter using the signal.iirnotch method (Infinite Impulse Response)
+            # Design the filter using the signal.butter method (Second Order Sequence).
             secondfilterOrderSections = signal.butter (filterOrder, cutoffFrequency, btype = filterType, fs = samplingFrequency, output = 'sos')
+
      
         
         # Apply the filter to the input signal.

@@ -7,25 +7,22 @@ currentVersionHandyTools = '20240501'
 import os
 import sys
 import shutil
-separatorCharacter = '\\' if sys.platform == 'win32' else '/'
-
 
 from pathlib import Path
 
 import datetime
 import time
 
-import matplotlib.pyplot as plt
 import numpy as np
 
-from scipy import signal
 
+separatorCharacter = '\\' if sys.platform == 'win32' else '/'
 
 
 class HandyTools:
-    """
-    HandyTools is a pseudo-class (no instantiation, no 'self'), bundling a couple of functions that can be "handy" at times.
-    """
+    '''
+    HandyTools is a pseudo-class (no instantiation, no 'self'), bundling a couple of functions that I have found to come in handy in many situations.
+    '''
 
 
     # A handy function to get the list of absolute paths of all files of a certain extension (default .png) down a directory tree
@@ -348,15 +345,19 @@ class HandyTools:
             numberOfDataLines = numberOfLines - iHeaderEnd - 1                                   
             if numberOfDataLines:
 
-                numberOfEntriesPerLine = len ( tableContent [iHeaderEnd + 1].split (separatorString) )
-                
+                # Depending on the structure of the table and the separator character it is possible the split function returns some empty strings.
+                # Make sure that those empty elements are not taken into account.
+                listOfColumnsValuesFirstLine = [ element  for element in tableContent [iHeaderEnd + 1].split (separatorString)  if element != '' ] 
+                numberOfEntriesPerLine = len (listOfColumnsValuesFirstLine)
+
                 tableContentDataNumbers = [ []  for iLine in range (numberOfEntriesPerLine) ]
                 tableContentDataStrings = [ []  for iLine in range (numberOfEntriesPerLine) ]
                        
                 # Go through each element on the line: elements are based on the  separatorString
                 for iTableContent in range (iHeaderEnd + 1, numberOfLines):
                 
-                    for iDataValueString, dataValuesString in enumerate ( tableContent [iTableContent].split (separatorString) ):
+                    listOfColumnsValuesCurrentLine = [ element  for element in tableContent [iTableContent].split (separatorString)  if element != '' ]
+                    for iDataValueString, dataValuesString in enumerate (listOfColumnsValuesCurrentLine):
 
                         tableContentDataStrings [iDataValueString].append ( dataValuesString.strip () )  
 
