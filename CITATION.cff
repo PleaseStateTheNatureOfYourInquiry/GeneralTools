@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, and you find it useful, then please cite it as below."
+authors:
+- family-names: "Roos-Serote"
+  given-names: "Maarten"
+  orcid: "https://orcid.org/0000-0001-5001-1347"
+title: "GeneralTools"
+version: 1.0
+doi: coming soon
+date-released: 202405027
+url: "https://github.com/PleaseStateTheNatureOfYourInquiry/GeneralTools"
