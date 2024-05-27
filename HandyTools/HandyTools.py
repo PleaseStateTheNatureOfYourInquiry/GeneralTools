@@ -282,8 +282,7 @@ class HandyTools:
             C_END
             entry1 1 4.5 6
             entry2 2 5.3 7
-            
-        
+                    
         Alternatively there can be no header and just data. 
         
         .. code-block:: console

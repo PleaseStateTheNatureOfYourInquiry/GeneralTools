@@ -412,7 +412,9 @@ class DataTools:
     def QQPlot (xInput, xlabelToPrint = 'input values', ylabelToPrint = 'z (sigma)',
                 QQTitleToPrint = 'DataTools version ' + DataToolsVersion + ': QQ-plot of input data',
                 HistTitleToPrint = 'DataTools version ' + DataToolsVersion + ': Histogram of input data', 
-                plotTextAverageMedian = True):
+                plotTextAverageMedian = True,
+                savePlots = False,
+                plotBaseFileName = 'QQPlot.png'):
         '''
         :param xInput: the list of data points.
         :type xInput: list [float]
@@ -432,10 +434,50 @@ class DataTools:
         :param plotTextAverageMedian: if True then plot the values of the average, median and standar deviation in the plot.
         :type plotTextAverageMedian: bool
 
+        :param savePlots: if True then the plots will be saved to files, the default is .png format.
+        :type savePlots: bool
+
+        :param plotBaseFileName: file name of the plots. It can be given with or without file  type extension (.png, .jpg, .jpeg or .gif). Spaces in the file name are replaced with :file:`_`.  
+        :type plotBaseFileName: str
+
                 
         **Description:**
         Calculate and plot the QQ-plot (or Quantile-Quantile plot), as well as the histogram, of a given list of data values.
+        If the user has opted to save the plots, then the plotBaseFileName is used to determine the file names of the plots.
+        The strings :file:`_QQPlot` and :file:`_Histogram` are automatically added at the end of the file name.
+        The default plot image file type is .png, if the user does not indicate any (.jpg, .jpeg or .gif).
         '''
+
+
+        # Make sure the plotBaseFileName has no space in the name and determine the extension.
+        if savePlots:
+
+            plotBaseFileName = plotBaseFileName.replace (' ', '_')
+       
+            extension = ' '
+            if '.png' in plotBaseFileName:
+            
+                extension = '.png'
+            
+            if '.jpg' in plotBaseFileName:
+
+                extension = '.jpg'
+                
+            if '.jpeg' in plotBaseFileName:
+            
+                extension = '.jpeg'
+
+            if '.gif' in plotBaseFileName:
+            
+                extention = '.gif'
+                
+            plotFileNameQQ = plotBaseFileName.split (extension)[0] + '_QQPlot'
+            plotFileNameQQ += '.png'  if extension == ' ' else  extension
+
+            plotFileNameHistogram = plotBaseFileName.split (extension)[0] + '_Histogram'
+            plotFileNameHistogram += '.png'  if extension == ' ' else  extension
+            
+
 
         xInput = np.array (xInput)
         xInputMean = np.mean (xInput)
@@ -516,6 +558,14 @@ class DataTools:
             plt.text (-2.8,2.3, labelSTDToPrint, color = 'green')
 
 
+        # Save the QQPlot if the user has selected this option.
+        if savePlots:
+        
+            plt.savefig (plotFileNameQQ)
+            plt.close ()
+
+        
+        
         plt.figure (2)
         plt.clf ()
 
@@ -524,13 +574,13 @@ class DataTools:
         xInputRange = xInputMax - xInputMin
         xInputBinSize = xInputRange / 100
 
-        bins = [ (xInputMin + i*xInputBinSize) for i in range (-1, 102) ]
+        bins = [ (xInputMin + i * xInputBinSize)  for i in range (-1, 102) ]
         xInputHistogram = np.histogram (xInput, bins = bins)
         xInputHistogramMax = np.max (xInputHistogram [0])
 
         plt.hist (xInput, bins = bins, color = 'green')
-        plt.xlim (xInputMin - 10*xInputBinSize, xInputMax + 10*xInputBinSize)
-        plt.ylim (0, xInputHistogramMax*1.17)
+        plt.xlim (xInputMin - 10 * xInputBinSize, xInputMax + 10 * xInputBinSize)
+        plt.ylim (0, xInputHistogramMax * 1.17)
         plt.xlabel (xlabelToPrint, fontsize = 12)
         plt.ylabel ('frequency', fontsize = 12)
 
@@ -538,10 +588,19 @@ class DataTools:
 
         if plotTextAverageMedian:
         
-            plt.text (xInputMin - 5*xInputBinSize, 1.10*xInputHistogramMax , labelMeanToPrint, color = 'green')
-            plt.text (xInputMin - 5*xInputBinSize, 1.04*xInputHistogramMax, labelSTDToPrint, color = 'green')
+            plt.text (xInputMin - 5 * xInputBinSize, 1.10 * xInputHistogramMax , labelMeanToPrint, color = 'green')
+            plt.text (xInputMin - 5 * xInputBinSize, 1.04 * xInputHistogramMax, labelSTDToPrint, color = 'green')
 
-        plt.show ()
+        
+        # Save the histogram plot if the user has selected this option.
+        if savePlots:
+        
+            plt.savefig (plotFileNameHistogram)
+            plt.close ()
+
+        else:            
+        
+            plt.show ()
 
 
 
@@ -687,7 +746,7 @@ class DataTools:
         :param removeNaN: if True then remove any NaN values from the list of data values.
         :type removeNaN: bool
         
-        :return: average, standard deviation and variance of the list of data values.
+        :return: median, lower and upper quantile as defined by lowerQuantilePercentage and upperQuantilePercentage.
         :rtype: float, float, float.
         
         **Description:**
