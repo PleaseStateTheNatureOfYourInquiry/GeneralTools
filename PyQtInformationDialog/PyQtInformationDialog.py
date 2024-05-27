@@ -1,3 +1,9 @@
+# HandyTools: a Python pseudo-class
+# Author: Maarten Roos-Serote
+# ORCID author: 0000 0001 5001 1347
+
+# Version: 20240527
+
 
 # Qt imports.
 from PyQt6.QtWidgets import QMessageBox, QLabel

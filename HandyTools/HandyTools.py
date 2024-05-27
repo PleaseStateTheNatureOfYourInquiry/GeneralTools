@@ -1,5 +1,6 @@
 # HandyTools: a Python pseudo-class
-# Author = Maarten Roos
+# Author: Maarten Roos-Serote
+# ORCID author: 0000 0001 5001 1347
 
 currentVersionHandyTools = '20240501'
 

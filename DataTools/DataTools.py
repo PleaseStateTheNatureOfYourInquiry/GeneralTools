@@ -1,5 +1,6 @@
 # DataTools: a Python pseudo-class
-# Author = Maarten Roos
+# Author: Maarten Roos-Serote
+# ORCID author: 0000 0001 5001 1347
 
 DataToolsVersion = '20240513'
 
