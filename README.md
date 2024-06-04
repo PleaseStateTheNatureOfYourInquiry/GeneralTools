@@ -3,12 +3,18 @@
 There are currently two different pseudo classes in **GeneralTools**, which are stand-alone (they do not depend on each other): **HandyTools** and **DataTools**. 
 The class **PyQtInformationDialog**  is only useful if you develop GUI with PyQt. You can happily ignore it if you do not.
 
-In order to use these classes, the Python session must know their paths on your machine, so you need to tell Python (Python startup file, .zprofile file, etc.) where to look with:
+In order to use these classes, the Python session must know their paths on your machine, so you need to tell Python via a Python startup file and/or in your .zprofile file (MAC) or other where to look. In Python language it is appending the path to the ```sys.path``` variable:
 
   ```
   sys.path.append ('/SomeWhereOnYourMachine/GeneralTools/DataTools')
   sys.path.append ('/SomeWhereOnYourMachine/GeneralTools/HandyTools')
   ```
+
+In the .zprofile file on a MAC it means adding lines like these:
+
+```
+export PYTHONPATH="/SomePathOnYourMachine/GeneralTools/PYtoCPP/DataTools:$PYTHONPATH"
+```
 
 **HandyTools** is purely written in Python and  It is a collection of small functions, that come in ... **handy**, as the name suggests. I wrote and collected these over the years. This set is pretty stable (I think) and I do not make many updates or changes to it anymore. 
 
