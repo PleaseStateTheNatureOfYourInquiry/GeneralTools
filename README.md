@@ -21,25 +21,17 @@ export PYTHONPATH="/SomeWhereOnYourMachine/GeneralTools/HandyTools:$PYTHONPATH"
 export PYTHONPATH="/SomeWhereOnYourMachine/GeneralTools/PyQtInformationDialog:$PYTHONPATH"
 ```
 
-**HandyTools** is purely written in Python and  It is a collection of small functions, that come in ... **handy**, as the name suggests. I wrote and collected these over the years. This set is pretty stable (I think) and I do not make many updates or changes to it anymore. 
+**HandyTools** is purely written in Python. It is a collection of small functions, that are ... well **handy**, as the name suggests (at least they are for me). I developed these over the years, as I was working on different projects. This set is pretty stable and I do not make many updates or changes to it. 
 
-**DataTools** is written in Python, and some of the functions have with bindings to C++, via Cython. This is a more recent class and I am more actively adding and updating things here. 
-The Cython and C++ code and the compiled libraries are in the `./PYtoCPP/DataTools` subfolder. The compilation has been done for Python 3.11, which I use on my machines. 
-If you use a different version of Python, then you must compile the two classes **DataWranglingToolsPYtoCPP** and **FilterToolsPYtoCPP** using
+**DataTools** is written in Python and some of the functions have C++ bindings, via Cython. This is a more recent class and I am more actively adding and updating code. 
+The Cython and C++ code and the compiled libraries are in the `./PYtoCPP/DataTools` subfolder. The compilation has been done for Python 3.11 (both Mac OS and Windows), which I use on my machine. On Mac, it might be necessary to have XCode installed before you can run it. If you use a different version of Python, then you must compile the two classes **DataWranglingToolsPYtoCPP** and **FilterToolsPYtoCPP** using
 
   ```
   > cd /SomeWhereOnYourMachine/GeneralTools/PYtoCPP/DataTools
   > python DataWranglingToolsPYtoCPP_setup.py build_ext --inplace
   > python FilterToolsPYtoCPP_setup.py build_ext --inplace
   ```
-Note that you might have to install Cython and/or some other compilers before you can compile, it depends on your Python distribution and packages.
-
-Note that before instantiating **DataTools** the path to `/SomeWhereOnYourMachine/GeneralTools/PYtoCPP/DataTools` needs of course to be known by the Python session:
-
-  ```
-  sys.path.append ('/SomeWhereOnYourMachine/GeneralTools/PYtoCPP/DataTools')
-  ```
-
+Note that you might have to install Cython and/or some other compilers (and/or XCode on Mac) before you can compile, it depends on your commputer's setup, and Python distribution and packages.
 
 
 
