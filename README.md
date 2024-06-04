@@ -3,17 +3,22 @@
 There are currently two different pseudo classes in **GeneralTools**, which are stand-alone (they do not depend on each other): **HandyTools** and **DataTools**. 
 The class **PyQtInformationDialog**  is only useful if you develop GUI with PyQt. You can happily ignore it if you do not.
 
-In order to use these classes, the Python session must know their paths on your machine, so you need to tell Python via a Python startup file and/or in your .zprofile file (MAC) or other where to look. In Python language it is appending the path to the ```sys.path``` variable:
+In order to use these classes, the Python session must know their paths on your machine, so you need to tell Python via a Python startup file and/or in your .zprofile file (MAC) or other where to look. In Python language it is appending the following path to the ```sys.path``` variable:
 
   ```
   sys.path.append ('/SomeWhereOnYourMachine/GeneralTools/DataTools')
+  sys.path.append ('/SomeWhereOnYourMachine/GeneralTools/PYtoCPP/DataTools')
   sys.path.append ('/SomeWhereOnYourMachine/GeneralTools/HandyTools')
+  sys.path.append ('/SomeWhereOnYourMachine/GeneralTools/PyQtInformationDialog')
   ```
 
-In the .zprofile file on a MAC it means adding lines like these:
+In the .zprofile file on a MAC it means adding the following lines:
 
 ```
-export PYTHONPATH="/SomePathOnYourMachine/GeneralTools/PYtoCPP/DataTools:$PYTHONPATH"
+export PYTHONPATH="/SomeWhereOnYourMachine/GeneralTools/DataTools:$PYTHONPATH"
+export PYTHONPATH="/SomeWhereOnYourMachine/GeneralTools/PYtoCPP/DataTools:$PYTHONPATH"
+export PYTHONPATH="/SomeWhereOnYourMachine/GeneralTools/HandyTools:$PYTHONPATH"
+export PYTHONPATH="/SomeWhereOnYourMachine/GeneralTools/PyQtInformationDialog:$PYTHONPATH"
 ```
 
 **HandyTools** is purely written in Python and  It is a collection of small functions, that come in ... **handy**, as the name suggests. I wrote and collected these over the years. This set is pretty stable (I think) and I do not make many updates or changes to it anymore. 
