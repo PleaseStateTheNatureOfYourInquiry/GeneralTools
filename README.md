@@ -33,7 +33,7 @@ The Cython and C++ code and the compiled libraries are in the `./PYtoCPP/DataToo
   ```
 Note that you might have to install Cython and/or some other compilers (and/or XCode on Mac) before you can compile, it depends on your commputer's setup, and Python distribution and packages.
 
-Once you have downloaded this repository, you can navigate to the ```GeneralToosl/docs/html``` folder. Click and open the ```index.html``` file to open the local webpages that are the docc-strings off **HandyTools** and **DataTools** compiled into a read-the-docs format.
+Once you have downloaded this repository, you can navigate to the ```GeneralToosl/docs/html``` folder. Click and open the ```index.html``` file to access the local webpages that are the docc-strings off **HandyTools** and **DataTools** compiled into a read-the-docs format.
 
 
 
