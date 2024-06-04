@@ -2,7 +2,7 @@
 # Author: Maarten Roos-Serote
 # ORCID author: 0000 0001 5001 1347
 
-DataToolsVersion = '20240513'
+DataToolsVersion = '20240604'
 
 # Standard imports.
 import os
@@ -355,7 +355,7 @@ class DataTools:
 
     # Determine the values of the variables a and b for the linear least square solution y  =  a * x  +  b.
     @staticmethod
-    def linearLeastSquare (xInput, yInput):
+    def linearLeastSquare ( xInput, yInput, weights = [] ):
         '''
         :param xInput: the x-values of the data to fit.
         :type xInput: list [float]
@@ -363,16 +363,26 @@ class DataTools:
         :param yInput: the y-values of the data to fit.
         :type yInput: list [float]
 
-        :return: a, b, uncertaintyA, uncertaintyB
-        :rtype: float, float, float, float
+        :param weights: the weights of the data to fit.
+        :type weights: list [float]
+
+        :return: a, b, uncertaintyA, uncertaintyB, rSquared
+        :rtype: float, float, float, float, float
         
         
         **Description:**
-        Determine the values of the variables a and b for the linear least square solution y (x) =  ax + b, along with their uncertainties, for a set of data points described by the x- and y-values.
+        Determine the values of the variables a and b for the linear least square solution y (x) =  ax + b, along with their uncertainties, for a set of data points described by the x- and y-values. An indication of the quality of the fit is given by the so-called `coefficient of determination <https://en.wikipedia.org/wiki/Coefficient_of_determination>`_ (r-squared), a value between 0 and 1, and is evaluated here. The closer r-square to 1, the better the fit.
         '''
     
+        
         xInput = np.asarray (xInput)
         yInput = np.asarray (yInput)
+
+        if not len (weights):
+
+            weights = np.ones ( len (xInput) )
+
+
         
         # do not take into account any NaN values in yInput
         iValid = np.where ( np.isfinite (yInput) )
@@ -404,7 +414,14 @@ class DataTools:
         uncertaintyA = np.sqrt (averageErrorA)
         uncertaintyB = np.sqrt (averageErrorB)
         
-        return a, b, uncertaintyA, uncertaintyB 
+        
+        # Calculate the r-squared value, an indication for the goodness of the fit. The closer to 1, the better the fit.
+        squaredSumResiduals = np.sum ( (y - (a * x + b)) ** 2 )        
+        dataAverage = np.sum (y) / numberOfValues
+        squaredSumTotal = np.sum ( (y - dataAverage) ** 2 ) 
+        rSquared = 1 - squaredSumResiduals / squaredSumTotal
+                
+        return a, b, uncertaintyA, uncertaintyB, rSquared
 
 
 
@@ -733,7 +750,12 @@ class DataTools:
 
     #
     @staticmethod
-    def getMedianAndQuantilesPYtoCPP (dataValues = [], lowerQuantilePercentage = 25, upperQuantilePercentage = 75, removeNaN = False):
+    def getMedianAndQuantilesPYtoCPP ( dataValues = [], 
+                                       lowerQuantilePercentage = 25, 
+                                       upperQuantilePercentage = 75, 
+                                       removeNaN = False,
+                                       uncertainties = [],
+                                       numberOfUncertaintyExperiments = 1000 ):
         '''
         :param dataValues: list of data values.
         :type dataValues: list [float] or NumPy array (one dimension)
@@ -746,29 +768,66 @@ class DataTools:
 
         :param removeNaN: if True then remove any NaN values from the list of data values.
         :type removeNaN: bool
+
+        :param uncertainties: list of uncertainties for each data point.
+        :type uncertainties: list [float] or NumPy array (one dimension)
+
+        :param numberOfUncertaintyExperiments: number of experiments to perform to create gaussian-randomised dataValues for the determination of the uncertainty in the median.
+        :type numberOfUncertaintyExperiments: int
+
         
-        :return: median, lower and upper quantile as defined by lowerQuantilePercentage and upperQuantilePercentage.
-        :rtype: float, float, float.
+        :return: median, lower and upper quantile as defined by lowerQuantilePercentage and upperQuantilePercentage, uncertainty in the median.
+        :rtype: float, float, float, float
         
         **Description:**
         Calculate the median, lower and upper quantiles of the list of data values using C++ code.   
-        If :code:`removeNaN = True`, then call the :py:meth:`~.getNanFreeNumpyArray` function to remove any NaN values from the data list.     
+        If :code:`removeNaN = True`, then call the :py:meth:`~.getNanFreeNumpyArray` function to remove any NaN values from the data list.
+        
+        If there are uncertainties associated with the data values, then the uncertainty in the median can be estimated from running a number of experiments. In each experiment, a new set of data values is created from the original set by adding random gaussian noise (using the NumPy random.normal method) with a standard deviation equal to the uncertainty in each data value. The medians of these experiments are collected and at the end, the standard deviation of these medians is returned. This value can be considered a good approximation of the uncertainty in the median of the original set due to the uncertainties in the data values. The default number of experiments is 1000, and this is only done if the uncertainties in the data values are passed as a list to the :code:`uncertainties` variable.
         '''
 
         if removeNaN:
               
             dataValues = DataTools.getNanFreeNumpyArray (dataValues)
+            uncertainties = DataTools.getNanFreeNumpyArray (uncertainties)
+            
  
     
-        if len (dataValues):
+        numberOfDataValues = len (dataValues)
+        numberOfUncertainties = len (uncertainties)
+        if numberOfDataValues:
     
             medianValue, lowerQuantileValue, upperQuantileValue = \
              DataWranglingToolsPYtoCPP.getMedianAndQuantilesPYtoCPP (dataValues, lowerQuantilePercentage / 100, upperQuantilePercentage / 100)   
-            return medianValue, lowerQuantileValue, upperQuantileValue
+
+            medianValueUncertainty = 0
+            # If there are uncertainties associated with every data values, then use these to run experiments to determine the uncertainty in the median value.
+            if numberOfUncertainties and numberOfUncertainties == numberOfDataValues:
+            
+                if numberOfUncertainties == 1: 
+                
+                    medianValueUncertainty = uncertainties [0]
+
+                else:
+                
+            
+                    medianValuesExperiments = []
+                    for iExperiment in range (numberOfUncertaintyExperiments):
+    
+                        # Assume that the uncertainty in each data value represents the standard deviation of a normal distribution around this data value.                 
+                        dataValuesRandomised = [ np.random.normal( dataValues [iDataValue], uncertainties [iDataValue], 1)[0]  
+                                                 for iDataValue in range ( len (uncertainties) ) ]
+                       
+                        medianValuesExperiments.append ( DataWranglingToolsPYtoCPP.getMedianAndQuantilesPYtoCPP (dataValuesRandomised, 0, 1)[0] )
+                
+                    medianValueUncertainty = DataTools.getAverageVarAndSDPYtoCPP (medianValuesExperiments) [1]
+                
+
+            return medianValue, lowerQuantileValue, upperQuantileValue, medianValueUncertainty
 
         else:
         
-            return None, None, None
+            return None, None, None, None
 
 
     #

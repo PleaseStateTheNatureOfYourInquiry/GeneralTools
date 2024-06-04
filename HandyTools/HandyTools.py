@@ -2,7 +2,7 @@
 # Author: Maarten Roos-Serote
 # ORCID author: 0000 0001 5001 1347
 
-currentVersionHandyTools = '20240501'
+currentVersionHandyTools = '20240529'
 
 # Standard imports.
 import os
@@ -15,6 +15,7 @@ import datetime
 import time
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 separatorCharacter = '\\' if sys.platform == 'win32' else '/'
@@ -440,7 +441,10 @@ class HandyTools:
 
             except:
         
-                print ( 'Warning: file {} already exists, it was not overwritten!'.format (fileNameWithExtension) )
+                print ('')
+                print ('---WARNING---')
+                print (' From HandyTools.saveContentToNumpyWithCustomExtension: ')
+                print ( '  file {} already exists, it was not overwritten!'.format (fileNameWithExtension) )                
  
  
         else:
@@ -623,3 +627,111 @@ class HandyTools:
         
             return time.time () - startTime
         
+        
+
+    # Draw horizontal 
+    @staticmethod
+    def plotErrorBars (xValues = [], yValues = [], xErrors = [], yErrors = [], colours = 'blue'):
+    
+
+
+        validListTypes = [list, np.ndarray]
+        if type (xValues) not in validListTypes or \
+           type (yValues) not in validListTypes or \
+           type (xErrors) not in validListTypes or \
+           type (yErrors) not in validListTypes:
+        
+            print ('')
+            print ('---WARNING---')
+            print (' From HandyTools.plotErrorBars: ')
+            print ('  passed values need to lists, not numbers.')                
+            return
+            
+    
+        numberOfValuesX = len (xValues)
+        numberOfValuesY = len (yValues)
+        numberOfValuesXErrors = len (xErrors)
+        numberOfValuesYErrors = len (yErrors)
+        
+        
+        if numberOfValuesX != numberOfValuesY:
+
+            print ('')
+            print ('---WARNING---')
+            print (' From HandyTools.plotErrorBars: ')
+            print ('  number of x and y values has to be the same.')                
+            return
+
+        
+        if numberOfValuesXErrors > 0 and numberOfValuesXErrors != numberOfValuesX:
+        
+            print ('')
+            print ('---WARNING---')
+            print (' From HandyTools.plotErrorBars: ')
+            print ('  number of x-error values needs to be the same as the number of x-values.')                
+            return 
+
+
+        if numberOfValuesYErrors > 0 and numberOfValuesYErrors != numberOfValuesX:
+
+            print ('')
+            print ('---WARNING---')
+            print (' From HandyTools.plotErrorBars: ')
+            print ('  number of y-error values needs to be the same as the number of y-values.')                
+            return
+
+
+        if type (colours) == str:
+        
+            colourPerValue = [ colours for iValue in range (numberOfValuesX) ]
+
+            
+        elif not ( len (colours) == numberOfValuesXErrors or len (colours) == numberOfValuesYErrors ):
+        
+            print ('---WARNING---')
+            print (' From HandyTools.plotErrorBars: ')
+            print ('  number of colour values needs to be the same as the number of data values.')                
+            return
+            
+        elif len (colours) == numberOfValuesXErrors or len (colours) == numberOfValuesYErrors:
+        
+            colourPerValue = colours
+
+        else:
+        
+            print ('')
+            print ('---WARNING---')
+            print (' From HandyTools.plotErrorBars: ')
+            print ('  colours variable has to be either a string of a list of strings.')                
+            return
+                    
+        
+        
+        
+        for iValue in range (numberOfValuesX):
+                
+            if numberOfValuesXErrors:
+            
+                plt.hlines (y = yValues [iValue], xmin = xValues [iValue] - xErrors[iValue], xmax = xValues [iValue] + xErrors[iValue], color = colourPerValue [iValue] )
+
+            if numberOfValuesYErrors:
+                        
+                plt.vlines (x = xValues [iValue], ymin = yValues [iValue] - yErrors[iValue], ymax = yValues [iValue] + yErrors[iValue], color = colourPerValue [iValue] )
+    
+    
+        
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
