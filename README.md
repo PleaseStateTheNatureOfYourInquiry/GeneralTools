@@ -21,9 +21,9 @@ export PYTHONPATH="/SomeWhereOnYourMachine/GeneralTools/HandyTools:$PYTHONPATH"
 export PYTHONPATH="/SomeWhereOnYourMachine/GeneralTools/PyQtInformationDialog:$PYTHONPATH"
 ```
 
-**HandyTools** is purely written in Python. It is a collection of small functions, that are ... well **handy**, as the name suggests (at least they are for me). I developed these over the years, as I was working on different projects. This set is pretty stable and I do not make many updates or changes to it. 
+**HandyTools** is written in Python only. It is a collection of small functions, that are ... well **handy** (at least they are for me). I developed them over the years, while working on different projects. This set is pretty stable and I do not make many updates or changes to it. 
 
-**DataTools** is written in Python and some of the functions have C++ bindings, via Cython. This is a more recent class and I am more actively adding and updating code. 
+**DataTools** is written in Python and some of the functions have C++ bindings, via Cython. This is a more recent class and I am more actively adding and updating the code. For example the filter functions are still rather rudimentary, with only one simpe filter written in C++.
 The Cython and C++ code and the compiled libraries are in the `./PYtoCPP/DataTools` subfolder. The compilation has been done for Python 3.11 (both Mac OS and Windows), which I use on my machine. On Mac, it might be necessary to have XCode installed before you can run it. If you use a different version of Python, then you must compile the two classes **DataWranglingToolsPYtoCPP** and **FilterToolsPYtoCPP** using
 
   ```
