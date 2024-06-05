@@ -1,4 +1,4 @@
-**GeneralTools** is a set of functions that come in handy in many instances when doing analysis of any kind of digital data and when working with data files. 
+**GeneralTools** is a set of functions designed to help working with any kind of digital data and (data) files. 
 
 There are currently two different pseudo classes in **GeneralTools**, which are stand-alone (they do not depend on each other): **HandyTools** and **DataTools**. 
 The class **PyQtInformationDialog**  is only useful if you develop GUI with PyQt. You can happily ignore it if you do not.
