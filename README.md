@@ -1,3 +1,7 @@
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.11510193.svg)](https://doi.org/10.5281/zenodo.11510193)
+
+
 **GeneralTools** is a set of functions designed to help working with any kind of digital data and (data) files. 
 
 There are currently two different pseudo classes in **GeneralTools**, which are stand-alone (they do not depend on each other): **HandyTools** and **DataTools**. 
