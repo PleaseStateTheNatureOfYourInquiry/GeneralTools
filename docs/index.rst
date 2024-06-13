@@ -6,17 +6,21 @@
     | `Research Gate <https://www.researchgate.net/profile/Maarten-Roos-Serote>`_
 
 
+
+GeneralTools for Scientists -  Documentation
+=============================================
+
 **GeneralTools** is a set of functions designed to help scientists working with any kind of digital data and (data) files. 
-
-There are currently two different pseudo classes in **GeneralTools**, which are stand-alone (they do not depend on each other): :ref:`HandyTools <handytoolssection>` and `DataTools <datatoolssection>`. 
-The class **PyQtInformationDialog**  is only useful when developing GUIs with PyQt. Please ignore it if this is not your case.
-
+I have developed these functions of the years while working on a variety of different science projects. 
+They are pieces of code that I kept reinventing and googling for, as I kept forgetting the exact details, while writing scripts to work with data and files.
+By sharing I hope these functions can be useful to other people as well.
 In the sections on these documentation pages, you can find the API's and descriptions of the functions.
 
 
-I have developed these functions of the years while working on a variety of different projects. 
-It are tools that I kept reinventing and googling for (as I kept forgetting the exact details), while writing scripts to work with data and files.
-By sharing I hope these can be useful to other people as well.
+There are currently two different pseudo classes in **GeneralTools**, which are stand-alone (they do not depend on each other): :ref:`HandyTools <handytoolssection>` and `DataTools <datatoolssection>`. 
+The class **PyQtInformationDialog**  is only useful when developing GUIs with PyQt. Just ignore it if this is not your case.
+
+
 I have tried hard to write them as general as possible, and to document their workings as clear as possible. 
 Kindly let me know if there are things that are unclear, or can be done in a more efficient way.
 
@@ -48,8 +52,6 @@ If you have comments or suggestions, then please feel free to contact me. You ar
 
 
 
-GeneralTools Documentation
-==========================
 
 
 .. toctree::
