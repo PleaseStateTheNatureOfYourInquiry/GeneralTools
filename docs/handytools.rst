@@ -1,5 +1,8 @@
+
+.. _handytoolssection:
+
 HandyTools
-=====================
+==========
 
 
 | :py:meth:`~.getFilesInDirectoryTree`

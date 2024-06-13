@@ -1,5 +1,8 @@
+
+.. _datatoolssection:
+
 DataTools
-=====================
+=========
 
 
 | :py:meth:`~.getSegmentSpecsFromDataValues`

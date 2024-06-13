@@ -5,9 +5,13 @@
 **GeneralTools** is a set of functions designed to help working with any kind of digital data and (data) files. 
 
 There are currently two different pseudo classes in **GeneralTools**, which are stand-alone (they do not depend on each other): **HandyTools** and **DataTools**. 
-The class **PyQtInformationDialog**  is only useful if you develop GUI with PyQt. You can happily ignore it if you do not.
+The class **PyQtInformationDialog**  is only useful when developing GUIs with PyQt. Please ignore it if this is not your case.
 
-In order to use these classes, the Python session must know their paths on your machine, so you need to tell Python via a Python startup file and/or in your .zprofile file (MAC) or other where to look. In Python language it is appending the following path to the ```sys.path``` variable:
+There is no ```pip install``` option (yet).
+Just clone this repository to a directory of your choice on your computer.
+In order to use these classes, the Python session must know the paths to the directories on your machine, 
+hence you need to tell Python, via a Python startup file and/or in your .zprofile file (MAC) or other, where to look.
+In means appending the following path to the ```sys.path``` variable:
 
   ```
   sys.path.append ('/SomeWhereOnYourMachine/GeneralTools/DataTools')
@@ -37,8 +41,7 @@ The Cython and C++ code and the compiled libraries are in the `./PYtoCPP/DataToo
   ```
 Note that you might have to install Cython and/or some other compilers (and/or XCode on Mac) before you can compile, it depends on your commputer's setup, and Python distribution and packages.
 
-Once you have downloaded this repository, you can navigate to the ```GeneralToosl/docs/html``` folder. Click and open the ```index.html``` file to access the local webpages that are the doc-strings of **HandyTools** and **DataTools** compiled into a read-the-docs format.
-
+You can find the documentation on how to use **GeneralTools** at this link.
 
 
 
