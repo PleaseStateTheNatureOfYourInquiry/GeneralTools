@@ -9,6 +9,7 @@ DataTools
 | :py:meth:`~.passAverageFilter`
 | :py:meth:`~.passMedianFilter`
 | :py:meth:`~.passButterworthNotchFilter`
+| :py:meth:`~.passButterworthBandPassOrStopFilter`
 | :py:meth:`~.linearLeastSquare`
 | :py:meth:`~.QQPlot`
 | :py:meth:`~.getCumulativeNormalDistribution`
@@ -31,6 +32,9 @@ DataTools
 
 
 .. automethod:: DataTools.DataTools.passButterworthNotchFilter
+
+
+.. automethod:: DataTools.DataTools.passButterworthBandPassOrStopFilter
 
 
 .. automethod:: DataTools.DataTools.linearLeastSquare

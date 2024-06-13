@@ -200,34 +200,64 @@ class DataTools:
         :param inputSignal: list (one dimension) of data values that represent the signal to be filtered.
         :type inputSignal: list 
 
-        :param bNotch: 
+        :param bNotch: filter parameters.
         :type bNotch: float
 
-        :param aNotch: 
+        :param aNotch: filter parameters.
         :type aNotch: float
 
         :param applyFilter: True if the filter needs to be applied to the signal.
         :type applyFilter: bool
 
-        :param samplingFrequency: 
+        :param samplingFrequency: the sampling frequency of the data in Hz.
         :type samplingFrequency: float
 
-        :param notchFrequency: 
+        :param notchFrequency: the notch frequency in Hz, default is 50Hz.
         :type notchFrequency: float
 
-        :param qualityFactor: 
+        :param qualityFactor: a quality factor, default is 2.
         :type qualityFactor: float
 
-        :param getFilterSettings: True if the filter settings need to be calculated.
+        :param getFilterSettings: True (default) if the filter settings are to be calculated.
         :type getFilterSettings: bool
 
-        :return: If getFilterSettings = True and applyFilter = True, then return outputSignal, bNotch, aNotch, filterFrequency, amplitudedB. If getFilterSettings = True and applyFilter = False, then return bNotch, aNotch, filterFrequency, amplitudedB. If getFilterSettings = False and applyFilter = True, then return outputSignal:
+        :return: If getFilterSettings = True and applyFilter = True, then return outputSignal, bNotch, aNotch, filterFrequency, amplitudedB. If getFilterSettings = True and applyFilter = False, then return bNotch, aNotch, filterFrequency, amplitudedB. If getFilterSettings = False and applyFilter = True, then return outputSignal.
         :rtype: list, NumPy array, NumPy array, NumPy array, NumPy array
         
         
         **Description:**
-        Pass a given input signal through a notch filter. Use the signal.iirnotch method to calculate the filter parameters *bNotch* and *aNotch*, 
-        and the signal.filtfilt method to apply the filter.
+        Pass a given input signal through a notch filter. 
+        The `scipy.signal.iirnotch <https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.iirnotch.html>`_ method 
+        is used to calculate the filter parameters :code:`bNotch` and :code:`aNotch`,
+        followed by the `signal.filtfilt <https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.filtfilt.html>`_ method 
+        to apply the filter to the data.
+        
+        To use this filter, two steps are involved.
+        The first step is to calculate the filter parameters:
+        
+        .. code-block:: Python
+        
+            dataSampleFrequency = 200 #Hz
+            notchFrequency = 50 #Hz
+            filterParameters = DataTools.passButterworthBandPassOrStopFilter ( applyFilter = False,
+                                                                               samplingFrequency = dataSampleFrequency,
+                                                                               notchFrequency = notchFrequency,
+                                                                               qualityFactor = 2,
+                                                                               getFilterSettings = True )
+        
+
+        This only needs to be done once for given settings. After that, the filter can be applied to the data:
+        
+        .. code-block:: Python
+        
+            someData = [a list of data values]
+            someDataFiltered = DataTools.passButterworthNotchFilter ( inputSignal = someData, 
+                                                                      bNotch = filterParameters [0],
+                                                                      aNotch = filterParameters [1],
+                                                                      getFilterSettings = False )
+        
+            
+        
         '''
 
         
@@ -282,32 +312,78 @@ class DataTools:
                                               filterOrder = 10,
                                               cutoffFrequency = 10,
                                               getFilterSettings = True ):
-    
-    
+       
         '''
         :param inputSignal: list (one dimension) of data values that represent the signal to be filtered.
         :type inputSignal: list 
         
         :param secondfilterOrderSections: SOS or Second-Order Sections.
-        :type secondfilterOrderSections:
+        :type secondfilterOrderSections: 
+
+        :param applyFilter: True if the filter needs to be applied to the signal.
+        :type applyFilter: bool
         
-        :param samplingFrequency: 
+        :param samplingFrequency: the sampling frequency of the data in Hz.
         :type samplingFrequency: float
 
-        :param filterType: 
-        :type filterType: int
+        :param filterType: 'lowpass', 'highpass' or 'bandstop', default is 'lowpass'
+        :type filterType: str
 
-        :param qualityFactor: 
-        :type qualityFactor: float
+        :param filterOrder: quality factor, default is 10.
+        :type filterOrder: float
 
-        :return: outputSignal, filterFrequency, amplitudedB
-        :rtype: list, float, float
+        :param cutoffFrequency: filter cutoff frequency, one number for low and high pass filters, a list of two numbers for band stop filter.
+        :type cutoffFrequency: float or list [float, float]
+
+        :return: If getFilterSettings = True and applyFilter = True, then return outputSignal, secondfilterOrderSections. If getFilterSettings = True and applyFilter = False, then return secondfilterOrderSections. If getFilterSettings = False and applyFilter = True, then return outputSignal.
+        :rtype: list, NumPy array, NumPy array
         
         
         **Description:**
-        Pass a given input signal through a Butterworth band pass or stop filter, using the signal.butter and signal.sosfilt methods. 
-        It is recommended to use *SOS*, or *Second-Order Sections*
-        (see `scipy.signal.butter description <https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.butter.html>`_).
+        Pass a given input signal through a **Butterworth band pass** (low pass or high pass) or a **Butterworth band stop** filter, 
+        using the `signal.butter <https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.butter.html>`_ and 
+        `signal.sosfilt <https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.sosfilt.html>`_ methods. 
+        It is recommended to use *SOS* (= *Second-Order Sections*).
+        
+        To use this filter, two steps are involved.
+        The first step is to calculate the filter parameters.
+        For a bandpass filter this could look like:
+        
+        .. code-block:: Python
+        
+            dataSampleFrequency = 200 #Hz
+            cutoffFrequency = 100 #Hz
+            filterParameters = DataTools.passButterworthBandPassOrStopFilter ( applyFilter = False,
+                                                                               samplingFrequency = dataSampleFrequency,
+                                                                               filterType = 'lowpass',
+                                                                               filterOrder = 10,
+                                                                               cutoffFrequency = cutoffFrequency,
+                                                                               getFilterSettings = True )
+
+        For a bandstop filter this could look like:
+        
+        .. code-block:: Python
+        
+            dataSampleFrequency = 200 #Hz
+            cutoffFrequency = [40, 60] #Hz
+            filterParameters = DataTools.passButterworthBandPassOrStopFilter ( applyFilter = False,
+                                                                               samplingFrequency = dataSampleFrequency,
+                                                                               filterType = 'lowpass',
+                                                                               filterOrder = 10,
+                                                                               cutoffFrequency = cutoffFrequency,
+                                                                               getFilterSettings = True )
+        
+
+
+        The first step needs to be done once for given settings. After that, the filter can be applied to the data:
+        
+        .. code-block:: Python
+        
+            someData = [a list of data values]
+            someDataFiltered = DataTools.passButterworthNotchFilter ( inputSignal = someData, 
+                                                                      secondfilterOrderSections = filterParameters,
+                                                                      getFilterSettings = False )
+
         '''
          
         # Calculate the filter parameters.
