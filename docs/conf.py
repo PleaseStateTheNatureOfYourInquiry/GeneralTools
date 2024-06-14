@@ -35,6 +35,9 @@ extensions = [
     'sphinx.ext.autodoc',
 ]
 
+autodoc_default_options = {
+    'member-order': 'bysource',
+}
 
 
 # Automatic numbering of figures and tables.
