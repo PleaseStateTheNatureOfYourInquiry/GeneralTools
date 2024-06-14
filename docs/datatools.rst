@@ -19,4 +19,44 @@ DataTools
 | :py:meth:`~.getNanFreeNumpyArray`
 
 
-hier is tekst
+
+
+
+.. automethod:: DataTools.DataTools.getSegmentSpecsFromDataValues
+
+
+.. automethod:: DataTools.DataTools.passAverageFilter
+
+
+.. automethod:: DataTools.DataTools.passMedianFilter
+
+
+.. automethod:: DataTools.DataTools.passButterworthNotchFilter
+
+
+.. automethod:: DataTools.DataTools.passButterworthBandPassOrStopFilter
+
+
+.. automethod:: DataTools.DataTools.linearLeastSquare
+
+
+.. automethod:: DataTools.DataTools.QQPlot
+
+
+.. automethod:: DataTools.DataTools.getCumulativeNormalDistribution
+
+
+.. automethod:: DataTools.DataTools.getNormalDistribution
+
+
+.. automethod:: DataTools.DataTools.getNormalDistributionValue
+
+
+.. automethod:: DataTools.DataTools.getAverageVarAndSDPYtoCPP
+
+
+.. automethod:: DataTools.DataTools.getMedianAndQuantilesPYtoCPP
+
+
+.. automethod:: DataTools.DataTools.getNanFreeNumpyArray
+
