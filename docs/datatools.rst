@@ -4,8 +4,6 @@
 DataTools
 =========
 
-testing
-
 | :py:meth:`~.getSegmentSpecsFromDataValues`
 | :py:meth:`~.passAverageFilter`
 | :py:meth:`~.passMedianFilter`
