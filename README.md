@@ -10,8 +10,7 @@ The class **PyQtInformationDialog**  is only useful when developing GUIs with Py
 There is no ```pip install``` option (yet).
 Just clone this repository to a directory of your choice on your computer.
 In order to use these classes, the Python session must know the paths to the directories on your machine.
-Hence you need to tell Python where to look via a Python startup file and/or in your .zprofile file (MAC), or other:
-the following paths need to be appended to the ```sys.path``` variable:
+Hence you need to tell Python where to look. If you use a Python startup file the following paths need to be appended to the ```sys.path``` variable:
 
   ```
   sys.path.append ('/SomeWhereOnYourMachine/GeneralTools/DataTools')
@@ -20,7 +19,7 @@ the following paths need to be appended to the ```sys.path``` variable:
   sys.path.append ('/SomeWhereOnYourMachine/GeneralTools/PyQtInformationDialog')
   ```
 
-In the .zprofile file on a MAC it means adding the following lines:
+If you run Python straight from the command line, then on a Mac you need to add the following lines to .zprofile (or .bashrc or similar):
 
 ```
 export PYTHONPATH="/SomeWhereOnYourMachine/GeneralTools/DataTools:$PYTHONPATH"
