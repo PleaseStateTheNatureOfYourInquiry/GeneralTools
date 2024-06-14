@@ -4,6 +4,7 @@
 DataTools
 =========
 
+testing
 
 | :py:meth:`~.getSegmentSpecsFromDataValues`
 | :py:meth:`~.passAverageFilter`
@@ -18,6 +19,7 @@ DataTools
 | :py:meth:`~.getAverageVarAndSDPYtoCPP`
 | :py:meth:`~.getMedianAndQuantilesPYtoCPP`
 | :py:meth:`~.getNanFreeNumpyArray`
+
 
 
 
