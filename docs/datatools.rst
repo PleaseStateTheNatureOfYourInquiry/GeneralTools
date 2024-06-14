@@ -19,9 +19,4 @@ DataTools
 | :py:meth:`~.getNanFreeNumpyArray`
 
 
-
-
-
-.. automodule:: DataTools.DataTools
-    :members:
-    :show-inheritance:
+hier is tekst
