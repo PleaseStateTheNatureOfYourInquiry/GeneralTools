@@ -42,6 +42,8 @@ autodoc_default_options = {
     'member-order': 'bysource',
 }
 
+templates_path = ['_templates']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # Automatic numbering of figures and tables.
 numfig = False
