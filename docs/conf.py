@@ -14,7 +14,6 @@ import os
 import sys
 sys.path.append ( os.path.abspath ('../HandyTools') )
 sys.path.append ( os.path.abspath ('../DataTools') )
-sys.path.append ( os.path.abspath ('../PYtoCPP/DataTools') )
 
 from HandyTools import HandyTools
 from DataTools import DataTools

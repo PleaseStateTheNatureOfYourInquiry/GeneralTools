@@ -23,6 +23,8 @@ from scipy import signal
 
 
 # Custom imports of the Python to C++ libraries.
+sys.path.append ( os.path.abspath ('./PYtoCPP/DataTools') )
+print (os.path.abspath ('./PYtoCPP/DataTools') )
 import DataWranglingToolsPYtoCPP
 import FilterToolsPYtoCPP
 
