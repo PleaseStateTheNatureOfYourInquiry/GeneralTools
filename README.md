@@ -9,9 +9,9 @@ The class **PyQtInformationDialog**  is only useful when developing GUIs with Py
 
 There is no ```pip install``` option (yet).
 Just clone this repository to a directory of your choice on your computer.
-In order to use these classes, the Python session must know the paths to the directories on your machine, 
-hence you need to tell Python, via a Python startup file and/or in your .zprofile file (MAC) or other, where to look.
-In means appending the following path to the ```sys.path``` variable:
+In order to use these classes, the Python session must know the paths to the directories on your machine.
+Hence you need to tell Python where to look via a Python startup file and/or in your .zprofile file (MAC), or other:
+the following paths need to be appended to the ```sys.path``` variable:
 
   ```
   sys.path.append ('/SomeWhereOnYourMachine/GeneralTools/DataTools')
