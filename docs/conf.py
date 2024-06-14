@@ -12,13 +12,15 @@
 #
 import os
 import sys
+sys.path.append ( os.path.abspath ('.') )
+sys.path.append ( os.path.abspath ('..') )
 sys.path.append ( os.path.abspath ('../HandyTools') )
 sys.path.append ( os.path.abspath ('../DataTools') )
 sys.path.append ( os.path.abspath ('../PYtoCPP/DataTools') )
 
 from HandyTools import HandyTools
 
-autodoc_mock_imports = ['DataWranglingToolsPYtoCPP', 'FilterToolsPYtoCPP']
+# autodoc_mock_imports = ['DataWranglingToolsPYtoCPP', 'FilterToolsPYtoCPP']
 from DataTools import DataTools
 
 
