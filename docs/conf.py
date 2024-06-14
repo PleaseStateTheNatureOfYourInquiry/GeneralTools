@@ -15,6 +15,8 @@ import sys
 sys.path.append ( os.path.abspath ('../HandyTools') )
 sys.path.append ( os.path.abspath ('../DataTools') )
 
+from HandyTools import HandyTools
+
 
 # -- Project information -----------------------------------------------------
 
