@@ -71,6 +71,6 @@ html_static_path = ['_static']
 # I added this based on the entry of 4 August 2022 in https://github.com/readthedocs/sphinx_rtd_theme/issues/301
 # The issue was that the sphinx_rtd_theme has a bug of placing the equation numbers above te equations, and not to the right of them.
 # This seems to solve it, or rather, it is a work-around.
-# html_css_files = ['css/custom.css']
+html_css_files = ['css/custom.css']
 
 html_last_updated_fmt = '%b %d, %Y, %X'
