@@ -20,9 +20,6 @@ sys.path.append ( os.path.abspath ('../PYtoCPP/DataTools') )
 
 autodoc_mock_imports = ['DataWranglingToolsPYtoCPP', 'FilterToolsPYtoCPP']
 
-# from HandyTools import HandyTools
-# from DataTools import DataTools
-
 
 # -- Project information -----------------------------------------------------
 

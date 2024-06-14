@@ -41,7 +41,7 @@ The Cython and C++ code and the compiled libraries are in the `./PYtoCPP/DataToo
   ```
 Note that you might have to install Cython and/or some other compilers (and/or XCode on Mac) before you can compile, it depends on your commputer's setup, and Python distribution and packages.
 
-You can find the documentation on how to use **GeneralTools** at this link.
+Please find the documentation on how to use **GeneralTools** [here](https://generaltools-for-scientists.readthedocs.io/en/latest/index.html).
 
 
 
