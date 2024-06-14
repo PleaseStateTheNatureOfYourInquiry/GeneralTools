@@ -11,7 +11,7 @@ GeneralTools for Scientists -  Documentation
 =============================================
 
 **GeneralTools** is a set of functions designed to help scientists working with any kind of digital data and (data) files. 
-I have developed these functions of the years while working on a variety of different science projects. 
+I have developed these functions over the years while working on a variety of different science projects. 
 They are pieces of code that I kept reinventing and googling for, as I kept forgetting the exact details, while writing scripts to work with data and files.
 By sharing I hope these functions can be useful to other people as well.
 In the sections on these documentation pages, you can find the API's and descriptions of the functions.
