@@ -295,7 +295,7 @@ class HandyTools:
         
         .. attention:: 
         
-            It is assumed there are no empty row amongst the data rows!
+            It is assumed there are no empty rows amongst the data rows!
 
                  
         The tabular data is returned both as an array of NumPy arrays and as a list of strings. 

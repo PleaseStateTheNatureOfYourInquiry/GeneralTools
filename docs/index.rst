@@ -17,7 +17,7 @@ By sharing I hope these functions can be useful to other people as well.
 In the sections on these documentation pages, you can find the API's and descriptions of the functions.
 
 
-There are currently two different pseudo classes in **GeneralTools**, which are stand-alone (they do not depend on each other): :ref:`HandyTools <handytoolssection>` and `DataTools <datatoolssection>`. 
+There are currently two different pseudo classes in **GeneralTools**, which are stand-alone (they do not depend on each other): :ref:`HandyTools <handytoolssection>` and :ref:`DataTools <datatoolssection>`. 
 The class **PyQtInformationDialog**  is only useful when developing GUIs with PyQt. Just ignore it if this is not your case.
 
 
