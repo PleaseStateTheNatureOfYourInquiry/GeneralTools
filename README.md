@@ -38,7 +38,7 @@ The Cython and C++ code and the compiled libraries are in the `./PYtoCPP/DataToo
   > python DataWranglingToolsPYtoCPP_setup.py build_ext --inplace
   > python FilterToolsPYtoCPP_setup.py build_ext --inplace
   ```
-Note that you might have to install Cython and/or some other compilers (and/or XCode on Mac) before you can compile, it depends on your commputer's setup, and Python distribution and packages.
+Note that you might have to install Cython and/or some other compilers (and/or XCode on Mac) before you can compile, it depends on your computer's setup, and Python distribution and packages.
 
 Please find the documentation on how to use **GeneralTools** [here](https://generaltools-for-scientists.readthedocs.io/en/latest/index.html).
 
