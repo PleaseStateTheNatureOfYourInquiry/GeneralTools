@@ -891,8 +891,7 @@ class DataTools:
                     for iExperiment in range (numberOfUncertaintyExperiments):
     
                         # Assume that the uncertainty in each data value represents the standard deviation of a normal distribution around this data value.                 
-                        dataValuesRandomised = [ np.random.normal( dataValues [iDataValue], uncertainties [iDataValue], 1)[0]  
-                                                 for iDataValue in range ( len (uncertainties) ) ]
+                        dataValuesRandomised = DataTools.getDataValuesWithGaussianNoise (dataValues, uncertainties)
                        
                         medianValuesExperiments.append ( DataWranglingToolsPYtoCPP.getMedianAndQuantilesPYtoCPP (dataValuesRandomised, 0, 1)[0] )
                 
@@ -904,6 +903,7 @@ class DataTools:
         else:
         
             return None, None, None, None
+
 
 
     #
@@ -931,4 +931,43 @@ class DataTools:
             return dataValues [~iNaNValues]
             
 
+
+    #
+    @staticmethod
+    def getDataValuesWithGaussianNoise (dataValues, uncertainties):
+        '''
+        :param dataValues: complete list of data values.
+        :type dataValues: list [float] or NumPy array (one dimension)
+
+        :param uncertainties: list of uncertainties for each data point.
+        :type uncertainties: list [float] or NumPy array (one dimension)
+        
+        :return: list of data values with random Gaussian noise added.
+        :rtype: NumPy array 
+        
+        **Description:**
+        Add Gaussian noise to a list of data values using the NumPy random.normal method. The user-provided uncertainty values for each data value are fed
+        into the np.random.normal method as the standard deviation of the normal distribution with mean value the data value.
+        '''
+
+        # Only do the noise adding if all the data values have associated uncertainties.
+        if len (dataValues) == len (uncertainties):
+        
+            # Assume that the uncertainty in each data value represents the standard deviation of a normal distribution around this data value.                 
+            dataValuesWithGaussianNoise = [ np.random.normal (dataValues [iDataValue], uncertainties [iDataValue], 1)[0]  
+                                            for iDataValue in range ( len (uncertainties) ) ]            
+            
+            
+        # If the number of data values does not match the number of uncertainty values, then issue a warning and return the data values.
+        else:
+
+            print ()
+            print ('---WARNING---')
+            print (' Number of data values does not correspond to the number of uncertainty values.')
+
+        
+            dataValuesWithGaussianNoise = dataValues
+
+            
+        return  np.asarray (dataValuesWithGaussianNoise)
 

@@ -17,6 +17,7 @@ DataTools
 | :py:meth:`~.getAverageVarAndSDPYtoCPP`
 | :py:meth:`~.getMedianAndQuantilesPYtoCPP`
 | :py:meth:`~.getNanFreeNumpyArray`
+| :py:meth:`~.getDataValuesWithGaussianNoise`
 
 
 
@@ -59,4 +60,7 @@ DataTools
 
 
 .. automethod:: DataTools.DataTools.getNanFreeNumpyArray
+
+
+.. automethod:: DataTools.DataTools.getDataValuesWithGaussianNoise
 
